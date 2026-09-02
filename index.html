@@ -64,7 +64,10 @@
     .badges { display: flex; gap: 7px; flex-wrap: wrap; }
     .badge { font-size: 11px; padding: 5px 9px; border-radius: 999px; background: #eef2ff; color: #4338ca; font-weight: 800; }
     .wheel-wrap { position: relative; width: min(760px, 100%); aspect-ratio: 1; margin: 0 auto; display: grid; place-items: center; }
-    #wheel { width: 100%; height: 100%; display: block; filter: drop-shadow(0 20px 28px rgba(15, 23, 42, .16)); touch-action: manipulation; }
+    
+    /* will-change để tăng tốc GPU mượt mà 60-120 FPS */
+    #wheel { width: 100%; height: 100%; display: block; touch-action: manipulation; will-change: transform; }
+    
     .pointer {
       position: absolute; right: -1px; top: 50%; transform: translateY(-50%) rotate(0deg);
       width: 0; height: 0; border-top: 20px solid transparent; border-bottom: 20px solid transparent;
@@ -82,7 +85,6 @@
     .center-label img { width: 100%; height: 100%; object-fit: cover; display: none; }
     .spin-hint { text-align: center; color: var(--muted); font-size: 12px; margin: 6px 0 4px; }
     
-    /* Thanh bộ lọc */
     .filterbar { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 14px 0 4px; flex-wrap: wrap; }
     .filter {
       border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 20px;
@@ -127,8 +129,11 @@
     .results-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .results h3 { margin: 0; font-size: 15px; font-weight: 800; }
     .result-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
-    .result-chip { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 11px; font-size: 12px; font-weight: 750; }
-    .result-chip small { color: #98a2b3; font-weight: 600; }
+    .result-chip {
+      display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff;
+      border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 750;
+    }
+    .result-chip small { color: #667085; font-weight: 600; font-size: 11px; margin-left: 3px; }
     .empty { color: #98a2b3; font-size: 13px; padding: 12px 0; }
     .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
     .theme { border: 1px solid var(--line); border-radius: 9px; padding: 8px 5px; background: #fff; font-size: 11px; font-weight: 800; }
@@ -150,9 +155,9 @@
     }
     .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     
-    /* Chế độ nền tối (Dark mode) */
     .dark { --bg1: #0b1020; --bg2: #111827; --panel: rgba(17, 24, 39, .93); --text: #f3f4f6; --muted: #98a2b3; --line: #374151; }
     .dark .btn, .dark .entry, .dark .row input[type="number"], .dark .row select, .dark .text, .dark .theme, .dark .result-chip, .dark .color-grid input, .dark .tabs, .dark .center-label, .dark .modal { background: #111827; color: #e5e7eb; border-color: #374151; }
+    .dark .result-chip small { color: #9ca3af; }
     .dark .tab.active { background: #1f2937; color: #fff; }
     .dark .note { background: #111827; }
     .dark .pointer { border-right-color: #f9fafb; }
@@ -175,12 +180,9 @@
       <p>34 học sinh • Xác suất mặc định chia đều • Chọn cả lớp / Nam / Nữ</p>
     </div>
     <div class="toolbar">
-      <button class="btn" id="newBtn">Tạo mới</button>
       <button class="btn" id="saveBtn">Lưu</button>
       <button class="btn" id="openBtn">Mở bản lưu</button>
-      <button class="btn" id="exportBtn">Xuất file</button>
-      <button class="btn" id="importBtn">Nhập file</button>
-      <button class="btn" id="shareBtn">Chia sẻ</button>
+      <button class="btn primary" id="shareBtn">Chia sẻ</button>
       <button class="btn icon" id="themeBtn" title="Chế độ Sáng/Tối">◐</button>
       <button class="btn icon" id="fullBtn" title="Toàn màn hình">⛶</button>
     </div>
@@ -249,12 +251,11 @@
 
 <div class="confetti" id="confetti"></div>
 <div class="toast" id="toast"></div>
-<input type="file" id="fileImport" accept=".json" hidden>
 <input type="file" id="bgInput" accept="image/*" hidden>
 <input type="file" id="centerInput" accept="image/*" hidden>
 
 <script>
-// Danh sách chuẩn đủ 34 học sinh lớp 11A3 (20 Nam, 14 Nữ)
+// Danh sách đầy đủ 34 học sinh lớp 11A3 (20 Nam, 14 Nữ)
 const CLASS = [
   {name:"Bùi Tuyết Anh", gender:"F"},
   {name:"Đỗ Phan Hoài Anh", gender:"M"},
@@ -301,7 +302,7 @@ const themes = {
   Sunset:["#7c2d12","#ea580c","#f97316","#f43f5e","#db2777","#9333ea"]
 };
 
-const STORAGE_KEY = "wheel11a3_v8";
+const STORAGE_KEY = "wheel11a3_v11";
 
 let state = {
   entries: CLASS.map(x => ({...x})),
@@ -310,8 +311,8 @@ let state = {
   spinning: false,
   results: [],
   equalChance: true,
-  duration: 10, // Mặc định thời gian quay 10 giây
-  spinVolume: .45, // Mặc định 45% (âm lượng thực tế đã khuếch đại x3)
+  duration: 10,
+  spinVolume: .45,
   winVolume: .7,
   slow: false,
   showTitle: true,
@@ -341,6 +342,13 @@ let lastPegIndex = -1;
 const $ = id => document.getElementById(id);
 const wheel = $("wheel"), ctx = wheel.getContext("2d");
 
+// ========================================================
+// OFFSCREEN BUFFER PRE-RENDERING (DỰNG HÌNH ĐỆM ĐẠT 60-120 FPS)
+// ========================================================
+const bufferCanvas = document.createElement("canvas");
+const bufferCtx = bufferCanvas.getContext("2d");
+let cachedDimension = 0;
+
 function cloneEntries(){
   return state.entries.filter(e => {
     const isEnabled = e.enabled !== false;
@@ -359,7 +367,7 @@ function pct(){
 
 function toast(msg){
   const t = $("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2200);
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2400);
 }
 
 function saveLocal(){
@@ -384,98 +392,106 @@ function loadLocal(){
   } catch(e) {}
 }
 
-function initCanvasSize(){
+function syncCanvasSize(){
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   const rect = wheel.getBoundingClientRect();
-  const w = rect.width || 700;
-  const h = rect.height || 700;
-  if(wheel.width !== Math.round(w * dpr) || wheel.height !== Math.round(h * dpr)){
-    wheel.width = Math.round(w * dpr);
-    wheel.height = Math.round(h * dpr);
+  const size = Math.round((rect.width || 700) * dpr);
+  if(wheel.width !== size || cachedDimension !== size){
+    wheel.width = size;
+    wheel.height = size;
+    bufferCanvas.width = size;
+    bufferCanvas.height = size;
+    cachedDimension = size;
   }
-  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+// Dựng sẵn nan quạt + chữ lên buffer đúng 1 lần
+function bakeWheel(){
+  syncCanvasSize();
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const W = bufferCanvas.width, H = bufferCanvas.height;
+  const cx = W / 2, cy = H / 2, R = (W / dpr) * 0.455 * dpr;
+  
+  bufferCtx.clearRect(0, 0, W, H);
+  const list = cloneEntries();
+
+  if(!list.length){
+    bufferCtx.beginPath(); bufferCtx.arc(cx, cy, R, 0, Math.PI * 2);
+    bufferCtx.fillStyle = "#f2f4f7"; bufferCtx.fill();
+    bufferCtx.fillStyle = "#667085"; bufferCtx.font = `700 ${18 * dpr}px system-ui`;
+    bufferCtx.textAlign = "center"; bufferCtx.textBaseline = "middle";
+    bufferCtx.fillText("Không còn học sinh nào", cx, cy);
+    return;
+  }
+
+  if(state.shadow){
+    bufferCtx.save();
+    bufferCtx.beginPath(); bufferCtx.arc(cx, cy, R + (4 * dpr), 0, Math.PI * 2);
+    bufferCtx.shadowColor = "rgba(15, 23, 42, .24)";
+    bufferCtx.shadowBlur = 20 * dpr;
+    bufferCtx.shadowOffsetY = 8 * dpr;
+    bufferCtx.fillStyle = "#fff"; bufferCtx.fill();
+    bufferCtx.restore();
+  }
+
+  const arc = (Math.PI * 2) / list.length;
+  const fixedFontSize = 13 * dpr;
+  const centerRadius = ((state.centerSize === "XL" ? 88 : state.centerSize === "L" ? 73 : state.centerSize === "S" ? 44 : 59) + 12) * dpr;
+  const maxTextWidth = R - centerRadius - (15 * dpr);
+
+  list.forEach((e, i) => {
+    const a0 = i * arc - Math.PI / 2;
+    const a1 = a0 + arc;
+
+    bufferCtx.beginPath();
+    bufferCtx.moveTo(cx, cy);
+    bufferCtx.arc(cx, cy, R, a0, a1);
+    bufferCtx.closePath();
+    bufferCtx.fillStyle = e.color || state.colors[i % state.colors.length];
+    bufferCtx.fill();
+
+    if(state.contours){
+      bufferCtx.strokeStyle = "rgba(255, 255, 255, .92)";
+      bufferCtx.lineWidth = 2 * dpr;
+      bufferCtx.stroke();
+    }
+
+    const mid = a0 + arc / 2;
+    bufferCtx.save();
+    bufferCtx.translate(cx, cy);
+    bufferCtx.rotate(mid);
+    bufferCtx.textAlign = "right";
+    bufferCtx.textBaseline = "middle";
+    bufferCtx.font = `700 ${fixedFontSize}px Inter, system-ui, sans-serif`;
+
+    let txt = e.name;
+    if(bufferCtx.measureText(txt).width > maxTextWidth){
+      while(txt.length > 0 && bufferCtx.measureText(txt + "...").width > maxTextWidth){
+        txt = txt.slice(0, -1);
+      }
+      txt = txt + "...";
+    }
+
+    bufferCtx.fillStyle = "#ffffff";
+    bufferCtx.shadowColor = "rgba(0, 0, 0, 0.45)";
+    bufferCtx.shadowBlur = 3 * dpr;
+    bufferCtx.shadowOffsetX = 1 * dpr;
+    bufferCtx.shadowOffsetY = 1 * dpr;
+    bufferCtx.fillText(txt, R - (16 * dpr), 0);
+    bufferCtx.restore();
+  });
 }
 
 function drawWheel(){
-  initCanvasSize();
-  const W = wheel.clientWidth || 700, H = wheel.clientHeight || 700;
-  const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.455;
+  const W = wheel.width, H = wheel.height;
   ctx.clearRect(0, 0, W, H);
-  const list = cloneEntries();
-
-  if(state.bg){
-    const im = new Image();
-    im.onload = () => {
-      ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
-      ctx.globalAlpha = .92; ctx.drawImage(im, cx - R, cy - R, 2 * R, 2 * R); ctx.restore();
-      drawAllTexts(list, cx, cy, R);
-    };
-    im.src = state.bg;
-  } else {
-    ctx.save();
-    ctx.beginPath(); ctx.arc(cx, cy, R + 5, 0, Math.PI * 2);
-    if(state.shadow){ ctx.shadowColor = "rgba(15, 23, 42, .24)"; ctx.shadowBlur = 22; ctx.shadowOffsetY = 8; }
-    ctx.fillStyle = "#fff"; ctx.fill(); ctx.restore();
-
-    if(!list.length){ drawEmpty(cx, cy, R); return; }
-    const arc = (Math.PI * 2) / list.length;
-    list.forEach((e, i) => {
-      const a0 = state.rotation + i * arc - Math.PI / 2;
-      const a1 = a0 + arc;
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a0, a1); ctx.closePath();
-      ctx.fillStyle = e.color || state.colors[i % state.colors.length];
-      ctx.fill();
-      if(state.contours){ ctx.strokeStyle = "rgba(255, 255, 255, .92)"; ctx.lineWidth = 2; ctx.stroke(); }
-      drawSegmentText(e, i, a0, arc, cx, cy, R);
-    });
-  }
-}
-
-function drawEmpty(cx, cy, R){
-  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = "#f2f4f7"; ctx.fill();
-  ctx.fillStyle = "#667085"; ctx.font = "700 18px system-ui"; ctx.textAlign = "center";
-  ctx.fillText("Không còn học sinh nào", cx, cy);
-}
-
-// Cố định cỡ chữ đồng đều (13px), tên quá dài tự động thêm dấu 3 chấm (...)
-function drawSegmentText(e, i, a0, arc, cx, cy, R){
-  const mid = a0 + arc / 2;
   ctx.save();
-  ctx.translate(cx, cy);
-  ctx.rotate(mid);
-  ctx.textAlign = "right";
-  ctx.textBaseline = "middle";
-
-  const fixedFontSize = 13;
-  ctx.font = `700 ${fixedFontSize}px Inter, system-ui, sans-serif`;
-
-  const centerRadius = (state.centerSize === "XL" ? 88 : state.centerSize === "L" ? 73 : state.centerSize === "S" ? 44 : 59) + 12;
-  const maxTextWidth = R - centerRadius - 15;
-
-  let txt = e.name;
-  if (ctx.measureText(txt).width > maxTextWidth) {
-    while (txt.length > 0 && ctx.measureText(txt + "...").width > maxTextWidth) {
-      txt = txt.slice(0, -1);
-    }
-    txt = txt + "...";
-  }
-
-  ctx.fillStyle = "#ffffff";
-  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
-  ctx.shadowBlur = 3;
-  ctx.shadowOffsetX = 1;
-  ctx.shadowOffsetY = 1;
-  ctx.fillText(txt, R - 16, 0);
+  ctx.translate(W / 2, H / 2);
+  ctx.rotate(state.rotation);
+  ctx.drawImage(bufferCanvas, -W / 2, -H / 2);
   ctx.restore();
 }
 
-function drawAllTexts(list, cx, cy, R){
-  if(!list.length){ drawEmpty(cx, cy, R); return; }
-  const arc = (Math.PI * 2) / list.length;
-  list.forEach((e, i) => drawSegmentText(e, i, state.rotation + i * arc - Math.PI / 2, arc, cx, cy, R));
-}
-
-// Chuyển đổi bộ lọc Cả lớp / Nam / Nữ
 function setFilter(filterType){
   if(state.spinning) return;
   state.filter = filterType;
@@ -484,15 +500,17 @@ function setFilter(filterType){
     btn.classList.toggle("active", btn.getAttribute("data-filter") === filterType);
   });
 
+  bakeWheel();
   drawWheel();
   saveLocal();
-  updateUI();
+  updateUI(false);
 
   const count = cloneEntries().length;
   toast(filterType === "all" ? `Đã chọn: Cả lớp (${count} học sinh)` : filterType === "M" ? `Đã chọn: Nam (${count} học sinh)` : `Đã chọn: Nữ (${count} học sinh)`);
 }
 
-function updateUI(){
+function updateUI(reBake = true){
+  if(reBake) bakeWheel();
   drawWheel();
 
   const list = cloneEntries();
@@ -527,6 +545,14 @@ function updateUI(){
   try { renderPanel(); } catch(e){}
 }
 
+// Định dạng thời gian gồm cả Giờ và Ngày tháng năm
+function formatResultTime(ts){
+  const d = new Date(ts);
+  const time = d.toLocaleTimeString("vi-VN", {hour: "2-digit", minute: "2-digit"});
+  const date = d.toLocaleDateString("vi-VN", {day: "2-digit", month: "2-digit", year: "numeric"});
+  return `${time} • ${date}`;
+}
+
 function renderResults(){
   const box = $("resultList");
   if(!box) return;
@@ -537,7 +563,7 @@ function renderResults(){
   box.innerHTML = state.results.map((r, i) => `
     <div class="result-chip">
       <span>${i + 1}. ${escapeHtml(r.name)}</span>
-      <small>${new Date(r.time).toLocaleTimeString("vi-VN", {hour: "2-digit", minute: "2-digit"})}</small>
+      <small>${formatResultTime(r.time)}</small>
     </div>
   `).join("");
 }
@@ -683,8 +709,8 @@ function bindOptions(){
     ["confettiOn", v => state.confetti = v],
     ["popup", v => state.popup = v],
     ["autoRemove", v => state.autoRemove = v],
-    ["shadow", v => { state.shadow = v; drawWheel(); }],
-    ["contours", v => { state.contours = v; drawWheel(); }],
+    ["shadow", v => { state.shadow = v; updateUI(); }],
+    ["contours", v => { state.contours = v; updateUI(); }],
     ["pointerColor", v => state.pointerColor = v]
   ];
 
@@ -748,7 +774,7 @@ function applyTheme(t){
   state.theme = t; state.colors = [...themes[t]]; saveLocal(); updateUI(); toast("Đã chọn chủ đề " + t);
 }
 
-function setColor(i, c){ state.colors[i] = c; saveLocal(); drawWheel(); }
+function setColor(i, c){ state.colors[i] = c; saveLocal(); updateUI(); }
 function chooseBg(){ $("bgInput").click(); }
 function chooseCenter(){ $("centerInput").click(); }
 
@@ -776,7 +802,6 @@ function ensureAudio(){
   if(audioCtx.state === "suspended") audioCtx.resume();
 }
 
-// Âm thanh gõ nấc bánh xe (X3 âm lượng)
 function playTickSound(){
   if(state.spinVolume <= 0) return;
   try {
@@ -795,7 +820,6 @@ function playTickSound(){
   } catch(e) {}
 }
 
-// Âm thanh chúc mừng (X3 âm lượng)
 function playWinSound(){
   if(state.winVolume <= 0) return;
   try {
@@ -828,8 +852,6 @@ function confetti(){
   setTimeout(() => c.innerHTML = "", 3300);
 }
 
-// Chuyển động quay theo từng giai đoạn: 
-// 3s đầu quay siêu nhanh -> giây thứ 4 chậm dần -> giây 7-8-9-10 cực chậm, nín thở giằng co
 function spin(){
   if(state.spinning) return;
   const list = cloneEntries();
@@ -840,9 +862,7 @@ function spin(){
   state.spinning = true;
 
   const arc = (Math.PI * 2) / list.length;
-  // Bứt tốc quay từ 16 đến 22 vòng
   const fullTurns = (state.slow ? 8 : 16) + Math.floor(Math.random() * 6);
-  // Dừng ngẫu nhiên liên tục ở bất kỳ vị trí nào trên ô
   const randomContinuousAngle = Math.random() * (Math.PI * 2);
 
   const start = state.rotation;
@@ -851,7 +871,6 @@ function spin(){
   const t0 = performance.now();
   lastPegIndex = -1;
 
-  // Đường cong giảm tốc: Nhanh ở 30% đầu (3s đầu), giảm tốc ở giữa, và cực chậm ở 35% cuối (giây 7, 8, 9, 10)
   function ease(t){
     return 1 - Math.pow(1 - t, 3.8);
   }
@@ -862,7 +881,6 @@ function spin(){
     state.rotation = start + (end - start) * e;
     drawWheel();
 
-    // Phát âm thanh và hiệu ứng rung nảy kim khi mỗi nấc đi qua
     const currentPeg = Math.floor((state.rotation + Math.PI / 2) / arc);
     if(currentPeg !== lastPegIndex){
       playTickSound();
@@ -897,7 +915,6 @@ function finishSpin(){
   const list = cloneEntries();
   if(!list.length) return;
 
-  // Xác định người trúng thưởng trực tiếp từ góc kim dừng thực tế
   const arc = (Math.PI * 2) / list.length;
   const pointerAngle = ((Math.PI / 2 - state.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
   const winningIndex = Math.floor(pointerAngle / arc) % list.length;
@@ -938,7 +955,6 @@ function finishSpin(){
   }
 }
 
-// Xử lý nút Loại khỏi vòng quay
 function removeCurrentWinner(silent = false){
   clearTimeout(autoRemoveTimer);
   
@@ -977,44 +993,67 @@ function closeWinnerPopup(){
 
 function exportResults(){
   if(!state.results.length){ toast("Chưa có kết quả để xuất"); return; }
-  const text = state.results.map((r, i) => `${i + 1}. ${r.name} — ${new Date(r.time).toLocaleString("vi-VN")}`).join("\n");
-  download("ket-qua-vong-quay-11A3.txt", text, "text/plain;charset=utf-8");
+  const text = state.results.map((r, i) => `${i + 1}. ${r.name} — ${formatResultTime(r.time)}`).join("\n");
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type: "text/plain;charset=utf-8"}));
+  a.download = "ket-qua-vong-quay-11A3.txt";
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
 
-function exportState(){ download("vong-quay-11A3.json", JSON.stringify(state, null, 2), "application/json;charset=utf-8"); }
-
-function download(name, text, type){
-  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type}));
-  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+// ========================================================
+// HỆ THỐNG CHIA SẺ TOÀN NĂNG (LƯU & ĐỒNG BỘ MỌI THIẾT BỊ)
+// ========================================================
+function encodeStateToUrl(obj) {
+  const json = JSON.stringify(obj);
+  return btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, (match, p1) => {
+    return String.fromCharCode('0x' + p1);
+  }));
 }
 
-function importState(file){
-  const r = new FileReader();
-  r.onload = () => {
-    try {
-      const s = JSON.parse(r.result);
-      state = {...state, ...s};
-      saveLocal(); updateUI(); toast("Đã nhập dữ liệu vòng quay thành công");
-    } catch(e){ toast("Tệp JSON không hợp lệ"); }
-  };
-  r.readAsText(file);
+function decodeUrlToState(b64) {
+  const binary = atob(b64);
+  const json = decodeURIComponent(Array.prototype.map.call(binary, ch => {
+    return '%' + ('00' + ch.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+  return JSON.parse(json);
 }
 
 function share(){
-  const data = btoa(unescape(encodeURIComponent(JSON.stringify({...state, results: []}))));
-  const url = location.href.split("#")[0] + "#data=" + data;
-  navigator.clipboard?.writeText(url)
-    .then(() => toast("Đã sao chép liên kết chia sẻ vào khay nhớ tạm"))
-    .catch(() => prompt("Sao chép liên kết này:", url));
+  try {
+    const b64 = encodeStateToUrl(state);
+    const url = window.location.origin + window.location.pathname + "#data=" + b64;
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(url).then(() => {
+        toast("Đã sao chép link chia sẻ đầy đủ dữ liệu!");
+      }).catch(() => {
+        prompt("Sao chép link chia sẻ toàn bộ dữ liệu:", url);
+      });
+    } else {
+      prompt("Sao chép link chia sẻ toàn bộ dữ liệu:", url);
+    }
+  } catch(e) {
+    toast("Không thể tạo link chia sẻ");
+  }
 }
 
+// Nạp dữ liệu từ link và tự động lưu vào máy mới
 function loadHash(){
-  if(!location.hash.startsWith("#data=")) return;
+  if(!location.hash || !location.hash.startsWith("#data=")) return;
   try {
-    const s = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(6)))));
-    state = {...state, ...s};
-    saveLocal(); toast("Đã mở vòng quay từ liên kết chia sẻ");
-  } catch(e) {}
+    const b64 = location.hash.slice(6);
+    const loaded = decodeUrlToState(b64);
+    if(loaded && loaded.entries && loaded.entries.length){
+      state = {...state, ...loaded};
+      saveLocal(); // Mặc định tự lưu vào dữ liệu trình duyệt trên máy mới
+      try {
+        history.replaceState(null, "", window.location.pathname); // Làm sạch link
+      } catch(e){}
+      toast("Đã đồng bộ và lưu toàn bộ dữ liệu từ link!");
+    }
+  } catch(e){
+    console.error("Lỗi nạp dữ liệu từ link:", e);
+  }
 }
 
 // Bắt sự kiện bàn phím và chuột
@@ -1046,20 +1085,7 @@ if($("clearResultsBtn")){
 if($("exportResultsBtn")) $("exportResultsBtn").onclick = exportResults;
 $("saveBtn").onclick = () => { saveLocal(); toast("Đã lưu vòng quay trên thiết bị"); };
 $("openBtn").onclick = () => { loadLocal(); updateUI(); toast("Đã tải bản lưu gần nhất"); };
-$("exportBtn").onclick = exportState;
-$("importBtn").onclick = () => $("fileImport").click();
-$("fileImport").onchange = e => { if(e.target.files[0]) importState(e.target.files[0]); e.target.value = ""; };
 $("shareBtn").onclick = share;
-$("newBtn").onclick = () => {
-  if(confirm("Tạo lại vòng quay đầy đủ 34 học sinh ban đầu và xóa lịch sử?")){
-    state = {
-      ...state,
-      entries: CLASS.map(x => ({...x})),
-      results: [], filter: "all", rotation: 0
-    };
-    saveLocal(); updateUI(); toast("Đã khởi tạo lại vòng quay đủ 34 học sinh");
-  }
-};
 
 $("themeBtn").onclick = () => {
   document.body.classList.toggle("dark");
@@ -1071,13 +1097,20 @@ $("fullBtn").onclick = () => {
   else document.exitFullscreen?.();
 };
 
-window.addEventListener("resize", () => { drawWheel(); });
+window.addEventListener("resize", () => {
+  syncCanvasSize();
+  bakeWheel();
+  drawWheel();
+});
 
 // Khởi chạy ban đầu
 loadLocal();
 loadHash();
 if(localStorage.getItem("wheel11a3dark") === "1") document.body.classList.add("dark");
-requestAnimationFrame(() => { updateUI(); });
+requestAnimationFrame(() => {
+  syncCanvasSize();
+  updateUI();
+});
 </script>
 </body>
 </html>
