@@ -1,169 +1,170 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vòng quay danh sách lớp 11A3 THPT HP | 11a3thpthp</title>
+  <meta name="description" content="Vòng quay danh sách lớp 11A3 THPT HP. Chọn học sinh ngẫu nhiên theo cả lớp, nam hoặc nữ.">
+  <meta name="keywords" content="11a3thpthp, 11A3 THPT HP, vòng quay 11A3, danh sách lớp 11A3">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://ldnb171.github.io/11a3thpthp/">
+  <style>
+    :root {
+      --bg1: #eef2ff; --bg2: #f8fafc; --panel: rgba(255, 255, 255, .94); --text: #172033;
+      --muted: #667085; --line: #e5e7eb; --accent: #635bff; --accent2: #4f46e5;
+      --danger: #ef4444; --shadow: 0 18px 55px rgba(31, 41, 55, .13);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; min-height: 100%;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+    }
+    body {
+      background:
+        radial-gradient(circle at 15% 15%, rgba(99, 91, 255, .18), transparent 30%),
+        radial-gradient(circle at 85% 80%, rgba(14, 165, 233, .13), transparent 28%),
+        linear-gradient(135deg, var(--bg1), var(--bg2));
+      overflow-x: hidden;
+    }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { max-width: 1500px; margin: auto; padding: 16px; }
+    .topbar {
+      height: 64px; background: var(--panel); border: 1px solid rgba(255, 255, 255, .7);
+      border-radius: 18px; box-shadow: var(--shadow); display: flex; align-items: center;
+      gap: 14px; padding: 10px 14px; backdrop-filter: blur(18px); position: sticky; top: 10px; z-index: 20;
+    }
+    .logo {
+      width: 42px; height: 42px; border-radius: 13px; display: grid; place-items: center;
+      background: linear-gradient(135deg, #635bff, #06b6d4); color: #fff; font-size: 21px;
+      box-shadow: 0 8px 20px rgba(79, 70, 229, .25); user-select: none;
+    }
+    .titlebox { min-width: 0; flex: 1; }
+    .titlebox h1 { font-size: 18px; margin: 0; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .titlebox p { font-size: 12px; margin: 2px 0 0; color: var(--muted); }
+    .toolbar { display: flex; gap: 7px; flex-wrap: wrap; justify-content: flex-end; }
+    .btn {
+      border: 1px solid var(--line); background: #fff; color: #344054; border-radius: 10px;
+      padding: 8px 12px; font-weight: 700; font-size: 13px; transition: .18s;
+    }
+    .btn:hover { transform: translateY(-1px); box-shadow: 0 5px 15px rgba(16, 24, 40, .08); }
+    .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+    .btn.danger { color: #b42318; border-color: #fecaca; background: #fff5f5; }
+    .btn.icon { width: 39px; padding: 8px 0; text-align: center; }
+    .layout { display: grid; grid-template-columns: minmax(520px, 1fr) 430px; gap: 16px; margin-top: 16px; }
+    .left { min-width: 0; }
+    .wheel-card, .panel, .results {
+      background: var(--panel); border: 1px solid rgba(255, 255, 255, .75); border-radius: 20px;
+      box-shadow: var(--shadow); backdrop-filter: blur(18px);
+    }
+    .wheel-card { padding: 18px; position: relative; overflow: hidden; }
+    .wheel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+    .wheel-head h2 { margin: 0; font-size: 16px; font-weight: 800; }
+    .badges { display: flex; gap: 7px; flex-wrap: wrap; }
+    .badge { font-size: 11px; padding: 5px 9px; border-radius: 999px; background: #eef2ff; color: #4338ca; font-weight: 800; }
+    .wheel-wrap { position: relative; width: min(760px, 100%); aspect-ratio: 1; margin: 0 auto; display: grid; place-items: center; }
+    #wheel { width: 100%; height: 100%; display: block; filter: drop-shadow(0 20px 28px rgba(15, 23, 42, .16)); touch-action: manipulation; }
+    .pointer {
+      position: absolute; right: -1px; top: 50%; transform: translateY(-50%) rotate(0deg);
+      width: 0; height: 0; border-top: 20px solid transparent; border-bottom: 20px solid transparent;
+      border-right: 38px solid #111827; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .2)); z-index: 5;
+      transition: transform .04s ease-out, border-right-color .2s; transform-origin: 34px 50%;
+    }
+    .pointer::after { content: ""; position: absolute; right: -34px; top: -7px; width: 8px; height: 14px; background: #fff; border-radius: 4px; }
+    .center-label {
+      position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 4;
+      width: 118px; height: 118px; border-radius: 50%; border: 7px solid rgba(255, 255, 255, .95);
+      background: #fff; display: grid; place-items: center; text-align: center; overflow: hidden;
+      box-shadow: 0 7px 22px rgba(15, 23, 42, .2); user-select: none; cursor: pointer;
+    }
+    .center-label span { font-weight: 900; font-size: 13px; line-height: 1.2; color: #111827; padding: 6px; }
+    .center-label img { width: 100%; height: 100%; object-fit: cover; display: none; }
+    .spin-hint { text-align: center; color: var(--muted); font-size: 12px; margin: 6px 0 4px; }
+    
+    /* Thanh bộ lọc */
+    .filterbar { display: flex; justify-content: center; align-items: center; gap: 8px; margin: 14px 0 4px; flex-wrap: wrap; }
+    .filter {
+      border: 1.5px solid var(--line); background: #fff; border-radius: 999px; padding: 8px 20px;
+      font-size: 13px; font-weight: 800; color: #475467; transition: .15s; outline: none;
+    }
+    .filter.active {
+      background: #111827 !important; color: #fff !important; border-color: #111827 !important;
+      box-shadow: 0 4px 14px rgba(17, 24, 39, .25);
+    }
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    .panel { padding: 14px; display: flex; flex-direction: column; min-height: 620px; }
+    .tabs { display: flex; gap: 4px; padding: 4px; background: #f2f4f7; border-radius: 12px; }
+    .tab { flex: 1; border: 0; background: transparent; padding: 8px; border-radius: 9px; font-size: 13px; font-weight: 800; color: #667085; }
+    .tab.active { background: #fff; color: #111827; box-shadow: 0 2px 7px rgba(16, 24, 40, .08); }
+    .panel-scroll { overflow: auto; padding-right: 3px; flex: 1; }
+    .section { padding: 14px 0; border-bottom: 1px solid var(--line); }
+    .section:first-child { padding-top: 10px; }
+    .section:last-child { border-bottom: 0; }
+    .section-title { font-size: 12px; text-transform: uppercase; letter-spacing: .05em; color: #667085; font-weight: 900; margin-bottom: 9px; }
+    .row { display: flex; align-items: center; gap: 9px; margin: 8px 0; }
+    .row label { font-size: 13px; font-weight: 700; flex: 1; }
+    .row input[type="range"] { width: 145px; }
+    .row input[type="number"], .row select, .text {
+      border: 1px solid var(--line); border-radius: 9px; padding: 7px 9px; background: #fff; outline: none;
+    }
+    .row input[type="number"] { width: 80px; }
+    .check { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin: 8px 0; cursor: pointer; }
+    .check input { width: 16px; height: 16px; }
+    .entry-actions { display: flex; gap: 6px; flex-wrap: wrap; }
+    .entries-list { display: flex; flex-direction: column; gap: 6px; max-height: 390px; overflow: auto; }
+    .entry {
+      display: grid; grid-template-columns: 24px 1fr auto; align-items: center; gap: 8px;
+      padding: 8px; border: 1px solid var(--line); border-radius: 10px; background: #fff;
+    }
+    .entry.off { opacity: .45; }
+    .entry-dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); }
+    .entry-name { font-size: 13px; font-weight: 750; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .entry-meta { font-size: 11px; color: #98a2b3; margin-top: 1px; }
+    .entry-tools { display: flex; gap: 3px; }
+    .entry-tools button { width: 28px; height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 7px; font-weight: bold; }
+    .results { margin-top: 16px; padding: 14px; }
+    .results-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .results h3 { margin: 0; font-size: 15px; font-weight: 800; }
+    .result-list { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 11px; }
+    .result-chip { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); background: #fff; border-radius: 999px; padding: 6px 11px; font-size: 12px; font-weight: 750; }
+    .result-chip small { color: #98a2b3; font-weight: 600; }
+    .empty { color: #98a2b3; font-size: 13px; padding: 12px 0; }
+    .theme-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 7px; }
+    .theme { border: 1px solid var(--line); border-radius: 9px; padding: 8px 5px; background: #fff; font-size: 11px; font-weight: 800; }
+    .theme-swatch { height: 15px; border-radius: 5px; margin-bottom: 5px; }
+    .color-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 5px; }
+    .color-grid input { width: 100%; height: 30px; border: 1px solid var(--line); border-radius: 7px; padding: 2px; }
+    .note { font-size: 11px; color: #667085; line-height: 1.45; background: #f8fafc; border-radius: 10px; padding: 9px; }
+    .overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, .55); backdrop-filter: blur(5px); display: none; align-items: center; justify-content: center; z-index: 100; padding: 18px; }
+    .modal { width: min(520px, 100%); background: #fff; border-radius: 20px; padding: 22px; box-shadow: 0 30px 80px rgba(0, 0, 0, .3); }
+    .modal .winner { font-size: 32px; font-weight: 950; margin: 18px 0; text-align: center; word-break: break-word; color: var(--accent2); }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+    .confetti { position: fixed; inset: 0; pointer-events: none; z-index: 99; overflow: hidden; }
+    .confetti i { position: absolute; width: 9px; height: 15px; animation: fall 2.7s linear forwards; }
+    @keyframes fall { from { transform: translateY(-30px) rotate(0); } to { transform: translateY(105vh) rotate(720deg); } }
+    .toast {
+      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(20px);
+      opacity: 0; z-index: 150; background: #111827; color: #fff; border-radius: 12px;
+      padding: 11px 18px; font-size: 13px; font-weight: 700; transition: .25s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    
+    /* Chế độ nền tối (Dark mode) */
+    .dark { --bg1: #0b1020; --bg2: #111827; --panel: rgba(17, 24, 39, .93); --text: #f3f4f6; --muted: #98a2b3; --line: #374151; }
+    .dark .btn, .dark .entry, .dark .row input[type="number"], .dark .row select, .dark .text, .dark .theme, .dark .result-chip, .dark .color-grid input, .dark .tabs, .dark .center-label, .dark .modal { background: #111827; color: #e5e7eb; border-color: #374151; }
+    .dark .tab.active { background: #1f2937; color: #fff; }
+    .dark .note { background: #111827; }
+    .dark .pointer { border-right-color: #f9fafb; }
+    .dark .filter { background: #1f2937; color: #9ca3af; border-color: #374151; }
+    .dark .filter.active { background: #635bff !important; color: #fff !important; border-color: #635bff !important; box-shadow: 0 4px 14px rgba(99, 91, 255, .4); }
 
-    <title>Vòng quay danh sách lớp 11A3 THPT HP | 11a3thpthp</title>
-
-    <meta name="description"
-          content="Vòng quay danh sách lớp 11A3 THPT HP. Chọn học sinh ngẫu nhiên theo cả lớp, nam hoặc nữ. Từ khóa: 11a3thpthp.">
-
-    <meta name="keywords"
-          content="11a3thpthp, 11A3 THPT HP, vòng quay 11A3, danh sách lớp 11A3">
-
-    <meta name="robots"
-          content="index, follow">
-
-    <link rel="canonical"
-          href="https://ldnb171.github.io/11a3thpthp/">
-</head>
-
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Vòng quay danh sách lớp 11A3</title>
-<style>
-:root{
-  --bg1:#eef2ff;--bg2:#f8fafc;--panel:rgba(255,255,255,.92);--text:#172033;
-  --muted:#667085;--line:#e5e7eb;--accent:#635bff;--accent2:#4f46e5;
-  --danger:#ef4444;--shadow:0 18px 55px rgba(31,41,55,.13);
-}
-*{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:var(--text)}
-body{
-  background:
-    radial-gradient(circle at 15% 15%,rgba(99,91,255,.18),transparent 30%),
-    radial-gradient(circle at 85% 80%,rgba(14,165,233,.13),transparent 28%),
-    linear-gradient(135deg,var(--bg1),var(--bg2));
-  overflow-x:hidden;
-}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.app{max-width:1500px;margin:auto;padding:16px}
-.topbar{
-  height:64px;background:var(--panel);border:1px solid rgba(255,255,255,.7);
-  border-radius:18px;box-shadow:var(--shadow);display:flex;align-items:center;
-  gap:14px;padding:10px 14px;backdrop-filter:blur(18px);position:sticky;top:10px;z-index:20
-}
-.logo{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:linear-gradient(135deg,#635bff,#06b6d4);color:#fff;font-size:21px;box-shadow:0 8px 20px rgba(79,70,229,.25)}
-.titlebox{min-width:0;flex:1}
-.titlebox h1{font-size:18px;margin:0;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.titlebox p{font-size:12px;margin:2px 0 0;color:var(--muted)}
-.toolbar{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}
-.btn{
-  border:1px solid var(--line);background:#fff;color:#344054;border-radius:10px;
-  padding:8px 11px;font-weight:700;font-size:13px;transition:.18s
-}
-.btn:hover{transform:translateY(-1px);box-shadow:0 5px 15px rgba(16,24,40,.08)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
-.btn.danger{color:#b42318;border-color:#fecaca;background:#fff5f5}
-.btn.icon{width:39px;padding:8px 0}
-.layout{display:grid;grid-template-columns:minmax(520px,1fr) 430px;gap:16px;margin-top:16px}
-.left{min-width:0}
-.wheel-card,.panel,.results{
-  background:var(--panel);border:1px solid rgba(255,255,255,.75);border-radius:20px;
-  box-shadow:var(--shadow);backdrop-filter:blur(18px)
-}
-.wheel-card{padding:18px;position:relative;overflow:hidden}
-.wheel-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
-.wheel-head h2{margin:0;font-size:16px}
-.badges{display:flex;gap:7px;flex-wrap:wrap}
-.badge{font-size:11px;padding:5px 9px;border-radius:999px;background:#eef2ff;color:#4338ca;font-weight:800}
-.wheel-wrap{position:relative;width:min(760px,100%);aspect-ratio:1;margin:0 auto;display:grid;place-items:center}
-#wheel{width:100%;height:100%;display:block;filter:drop-shadow(0 20px 28px rgba(15,23,42,.16));touch-action:manipulation}
-.pointer{
-  position:absolute;right:-1px;top:50%;transform:translateY(-50%);
-  width:0;height:0;border-top:20px solid transparent;border-bottom:20px solid transparent;
-  border-right:38px solid #111827;filter:drop-shadow(0 3px 4px rgba(0,0,0,.2));z-index:5
-}
-.pointer::after{content:"";position:absolute;right:-34px;top:-7px;width:8px;height:14px;background:#fff;border-radius:4px}
-.center-label{
-  position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;
-  width:118px;height:118px;border-radius:50%;border:7px solid rgba(255,255,255,.95);
-  background:#fff;display:grid;place-items:center;text-align:center;overflow:hidden;
-  box-shadow:0 7px 22px rgba(15,23,42,.2);user-select:none
-}
-.center-label span{font-weight:900;font-size:15px;line-height:1.05;color:#111827;padding:10px}
-.center-label img{width:100%;height:100%;object-fit:cover;display:none}
-.spin-hint{text-align:center;color:var(--muted);font-size:12px;margin:3px 0 4px}
-.filterbar{display:flex;justify-content:center;gap:8px;margin:10px 0 2px;flex-wrap:wrap}
-.filter{
-  border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 15px;
-  font-size:13px;font-weight:800;color:#475467
-}
-.filter.active{background:#111827;color:#fff;border-color:#111827}
-.panel{padding:14px;display:flex;flex-direction:column;min-height:620px}
-.tabs{display:flex;gap:4px;padding:4px;background:#f2f4f7;border-radius:12px}
-.tab{flex:1;border:0;background:transparent;padding:8px;border-radius:9px;font-size:13px;font-weight:800;color:#667085}
-.tab.active{background:#fff;color:#111827;box-shadow:0 2px 7px rgba(16,24,40,.08)}
-.panel-scroll{overflow:auto;padding-right:3px;flex:1}
-.section{padding:14px 0;border-bottom:1px solid var(--line)}
-.section:first-child{padding-top:12px}
-.section:last-child{border-bottom:0}
-.section-title{font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:#667085;font-weight:900;margin-bottom:9px}
-.row{display:flex;align-items:center;gap:9px;margin:8px 0}
-.row label{font-size:13px;font-weight:700;flex:1}
-.row input[type="range"]{width:145px}
-.row input[type="number"],.row select,.text{
-  border:1px solid var(--line);border-radius:9px;padding:7px 9px;background:#fff;outline:none
-}
-.row input[type="number"]{width:80px}
-.check{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;margin:8px 0}
-.check input{width:16px;height:16px}
-.entry-actions{display:flex;gap:6px;flex-wrap:wrap}
-.entries-list{display:flex;flex-direction:column;gap:6px;max-height:390px;overflow:auto}
-.entry{
-  display:grid;grid-template-columns:27px 1fr auto;align-items:center;gap:7px;
-  padding:8px;border:1px solid var(--line);border-radius:10px;background:#fff
-}
-.entry.off{opacity:.45}
-.entry-dot{width:20px;height:20px;border-radius:50%;border:1px solid rgba(0,0,0,.1)}
-.entry-name{font-size:13px;font-weight:750;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.entry-meta{font-size:10px;color:#98a2b3;margin-top:1px}
-.entry-tools{display:flex;gap:3px}
-.entry-tools button{width:28px;height:28px;border:1px solid var(--line);background:#fff;border-radius:7px}
-.results{margin-top:16px;padding:14px}
-.results-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.results h3{margin:0;font-size:15px}
-.result-list{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
-.result-chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 9px;font-size:12px;font-weight:750}
-.result-chip small{color:#98a2b3;font-weight:600}
-.empty{color:#98a2b3;font-size:13px;padding:12px 0}
-.theme-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
-.theme{
-  border:1px solid var(--line);border-radius:9px;padding:8px 5px;background:#fff;font-size:11px;font-weight:800;
-}
-.theme-swatch{height:15px;border-radius:5px;margin-bottom:5px}
-.color-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
-.color-grid input{width:100%;height:30px;border:1px solid var(--line);border-radius:7px;padding:2px}
-.note{font-size:11px;color:#667085;line-height:1.45;background:#f8fafc;border-radius:10px;padding:9px}
-.overlay{position:fixed;inset:0;background:rgba(15,23,42,.55);backdrop-filter:blur(5px);display:none;align-items:center;justify-content:center;z-index:100;padding:18px}
-.modal{width:min(520px,100%);background:#fff;border-radius:20px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.3)}
-.modal h2{margin:0 0 7px}
-.modal .winner{font-size:31px;font-weight:950;margin:18px 0;text-align:center;word-break:break-word}
-.modal-actions{display:flex;justify-content:flex-end;gap:8px}
-.confetti{position:fixed;inset:0;pointer-events:none;z-index:99;overflow:hidden}
-.confetti i{position:absolute;width:9px;height:15px;animation:fall 2.7s linear forwards}
-@keyframes fall{from{transform:translateY(-30px) rotate(0)}to{transform:translateY(105vh) rotate(720deg)}}
-.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(20px);opacity:0;z-index:150;background:#111827;color:#fff;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;transition:.25s}
-.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.dark{--bg1:#0b1020;--bg2:#111827;--panel:rgba(17,24,39,.93);--text:#f3f4f6;--muted:#98a2b3;--line:#374151}
-.dark .btn,.dark .filter,.dark .entry,.dark .row input[type="number"],.dark .row select,.dark .text,.dark .theme,.dark .result-chip,.dark .color-grid input,.dark .tabs,.dark .center-label{background:#111827;color:#e5e7eb;border-color:#374151}
-.dark .tab.active{background:#1f2937;color:#fff}
-.dark .note{background:#111827}
-.dark .pointer{border-right-color:#f9fafb}
-@media(max-width:1050px){.layout{grid-template-columns:1fr}.panel{min-height:auto}.panel-scroll{max-height:none}}
-@media(max-width:650px){
-  .app{padding:9px}.topbar{position:static;height:auto}.toolbar{justify-content:flex-start}.layout{margin-top:9px}
-  .wheel-card{padding:9px}.pointer{right:-2px}.center-label{width:88px;height:88px}.center-label span{font-size:12px}
-  .panel{padding:10px}.color-grid{grid-template-columns:repeat(6,1fr)}
-}
-</style>
+    @media(max-width: 1050px) { .layout { grid-template-columns: 1fr; } .panel { min-height: auto; } }
+    @media(max-width: 650px) {
+      .app { padding: 9px; } .topbar { position: static; height: auto; } .toolbar { justify-content: flex-start; } .layout { margin-top: 9px; }
+      .wheel-card { padding: 9px; } .center-label { width: 88px; height: 88px; } .center-label span { font-size: 11px; }
+    }
+  </style>
 </head>
 <body>
 <div class="app">
@@ -174,13 +175,13 @@ button{cursor:pointer}
       <p>34 học sinh • Xác suất mặc định chia đều • Chọn cả lớp / Nam / Nữ</p>
     </div>
     <div class="toolbar">
-      <button class="btn" id="newBtn">New</button>
-      <button class="btn" id="saveBtn">Save</button>
-      <button class="btn" id="openBtn">Open</button>
-      <button class="btn" id="exportBtn">Export</button>
-      <button class="btn" id="importBtn">Import</button>
-      <button class="btn" id="shareBtn">Share</button>
-      <button class="btn icon" id="themeBtn" title="Sáng/Tối">◐</button>
+      <button class="btn" id="newBtn">Tạo mới</button>
+      <button class="btn" id="saveBtn">Lưu</button>
+      <button class="btn" id="openBtn">Mở bản lưu</button>
+      <button class="btn" id="exportBtn">Xuất file</button>
+      <button class="btn" id="importBtn">Nhập file</button>
+      <button class="btn" id="shareBtn">Chia sẻ</button>
+      <button class="btn icon" id="themeBtn" title="Chế độ Sáng/Tối">◐</button>
       <button class="btn icon" id="fullBtn" title="Toàn màn hình">⛶</button>
     </div>
   </header>
@@ -191,33 +192,32 @@ button{cursor:pointer}
         <div class="wheel-head">
           <h2 id="wheelTitle">Vòng quay 11A3</h2>
           <div class="badges">
-            <span class="badge" id="countBadge">34 mục</span>
+            <span class="badge" id="countBadge">34 học sinh</span>
             <span class="badge" id="probBadge">Mỗi bạn ≈ 2,94%</span>
           </div>
         </div>
         <div class="wheel-wrap">
           <canvas id="wheel" width="900" height="900" aria-label="Vòng quay"></canvas>
-          <div class="pointer"></div>
-          <div class="center-label" id="centerLabel">
-            <span>CLICK<br>TO SPIN</span>
+          <div class="pointer" id="wheelPointer"></div>
+          <div class="center-label" id="centerLabel" title="Bấm vào để quay">
+            <span>NHẤP ĐỂ<br>QUAY</span>
             <img id="centerImg" alt="">
           </div>
         </div>
         <div class="filterbar">
-          <button class="filter active" data-filter="all">Cả lớp</button>
-          <button class="filter" data-filter="M">Nam</button>
-          <button class="filter" data-filter="F">Nữ</button>
+          <button class="filter active" data-filter="all" onclick="setFilter('all')">Cả lớp</button>
+          <button class="filter" data-filter="M" onclick="setFilter('M')">Nam</button>
+          <button class="filter" data-filter="F" onclick="setFilter('F')">Nữ</button>
         </div>
-        <div class="spin-hint">Nhấp vào tâm vòng quay hoặc nhấn <b>Space / Enter</b> để quay</div>
+        <div class="spin-hint">Nhấp vào tâm vòng quay hoặc nhấn <b>Phím cách (Space) / Enter</b> để quay</div>
       </div>
 
       <div class="results">
         <div class="results-head">
           <h3>Lịch sử kết quả</h3>
           <div class="entry-actions">
-            <button class="btn" id="sortResultsBtn">Sort</button>
-            <button class="btn" id="clearResultsBtn">Clear</button>
-            <button class="btn" id="exportResultsBtn">Export results</button>
+            <button class="btn" id="clearResultsBtn">Xóa lịch sử</button>
+            <button class="btn" id="exportResultsBtn">Xuất kết quả</button>
           </div>
         </div>
         <div class="result-list" id="resultList"></div>
@@ -237,15 +237,16 @@ button{cursor:pointer}
 
 <div class="overlay" id="winnerOverlay">
   <div class="modal">
-    <div style="text-align:center;color:#667085;font-weight:800;font-size:12px">KẾT QUẢ VÒNG QUAY</div>
+    <div style="text-align:center;color:#667085;font-weight:800;font-size:12px;letter-spacing:1px">KẾT QUẢ VÒNG QUAY</div>
     <div class="winner" id="winnerName"></div>
-    <div style="text-align:center;color:#667085;font-size:13px;margin-bottom:18px" id="winnerMessage">We have a winner!</div>
+    <div style="text-align:center;color:#667085;font-size:14px;margin-bottom:20px" id="winnerMessage">Đã chọn được học sinh may mắn!</div>
     <div class="modal-actions">
-      <button class="btn danger" id="removeWinnerBtn">Remove</button>
-      <button class="btn primary" id="closeWinnerBtn">Đóng</button>
+      <button class="btn danger" id="removeWinnerBtn" onclick="removeCurrentWinner()">Loại khỏi vòng quay</button>
+      <button class="btn primary" id="closeWinnerBtn" onclick="closeWinnerPopup()">Đóng</button>
     </div>
   </div>
 </div>
+
 <div class="confetti" id="confetti"></div>
 <div class="toast" id="toast"></div>
 <input type="file" id="fileImport" accept=".json" hidden>
@@ -253,42 +254,43 @@ button{cursor:pointer}
 <input type="file" id="centerInput" accept="image/*" hidden>
 
 <script>
+// Danh sách chuẩn đủ 34 học sinh lớp 11A3 (20 Nam, 14 Nữ)
 const CLASS = [
-  {name:"Bùi Tuyết Anh",gender:"F"},
-  {name:"Đỗ Phan Hoài Anh",gender:"M"},
-  {name:"Nguyễn Hoàng Ngân Anh",gender:"F"},
-  {name:"Nguyễn Huỳnh Tuấn Anh",gender:"M"},
-  {name:"Nguyễn Tuấn Anh",gender:"M"},
-  {name:"Lê Đình Nhật Bằng",gender:"M"},
-  {name:"Lê Nguyễn Ngọc Bích",gender:"F"},
-  {name:"Nguyễn Đoàn Bảo Chi",gender:"F"},
-  {name:"Nguyễn Tường Duy",gender:"M"},
-  {name:"Ngô Gia Đạt",gender:"M"},
-  {name:"Phạm Quỳnh Giang",gender:"F"},
-  {name:"Đoàn Thanh Huy",gender:"M"},
-  {name:"Lê Hoàng Nhựt Huy",gender:"M"},
-  {name:"Lê Huỳnh Hoàng Huy",gender:"M"},
-  {name:"Trần Thanh Huy",gender:"M"},
-  {name:"Lâm Minh Nguyễn Khang",gender:"M"},
-  {name:"Huỳnh Gia Khiêm",gender:"M"},
-  {name:"Lê Tuấn Kiệt",gender:"M"},
-  {name:"Nguyễn Tuấn Minh",gender:"M"},
-  {name:"Tôn Gia Nghi",gender:"F"},
-  {name:"Đoàn Nguyễn Phương Nhi",gender:"F"},
-  {name:"Phan Trọng Phú",gender:"M"},
-  {name:"Lê Trần Duy Phước",gender:"M"},
-  {name:"Phạm Tấn Tài",gender:"M"},
-  {name:"Phan Nguyễn Hoàng Thiện",gender:"M"},
-  {name:"Võ Ngọc Thịnh",gender:"M"},
-  {name:"Phạm Đào Kim Thư",gender:"F"},
-  {name:"Nguyễn Ngọc Bích Trâm",gender:"F"},
-  {name:"Nguyễn Phương Trinh",gender:"F"},
-  {name:"Đặng Lê Ngọc Trọng",gender:"M"},
-  {name:"Nguyễn Thị Mộng Tuyền",gender:"F"},
-  {name:"Nguyễn Minh Tuyết",gender:"F"},
-  {name:"Nguyễn Thị Tường Vy",gender:"F"},
-  {name:"Nguyễn Thị Như Ý",gender:"F"}
-].map((x,i)=>({...x,id:i+1,enabled:true,weight:1,color:null,image:null,message:"We have a winner!"}));
+  {name:"Bùi Tuyết Anh", gender:"F"},
+  {name:"Đỗ Phan Hoài Anh", gender:"M"},
+  {name:"Nguyễn Hoàng Ngân Anh", gender:"F"},
+  {name:"Nguyễn Huỳnh Tuấn Anh", gender:"M"},
+  {name:"Nguyễn Tuấn Anh", gender:"M"},
+  {name:"Lê Đình Nhật Bằng", gender:"M"},
+  {name:"Lê Nguyễn Ngọc Bích", gender:"F"},
+  {name:"Nguyễn Đoàn Bảo Chi", gender:"F"},
+  {name:"Nguyễn Tường Duy", gender:"M"},
+  {name:"Ngô Gia Đạt", gender:"M"},
+  {name:"Phạm Quỳnh Giang", gender:"F"},
+  {name:"Đoàn Thanh Huy", gender:"M"},
+  {name:"Lê Hoàng Nhựt Huy", gender:"M"},
+  {name:"Lê Huỳnh Hoàng Huy", gender:"M"},
+  {name:"Trần Thanh Huy", gender:"M"},
+  {name:"Lâm Minh Nguyễn Khang", gender:"M"},
+  {name:"Huỳnh Gia Khiêm", gender:"M"},
+  {name:"Lê Tuấn Kiệt", gender:"M"},
+  {name:"Nguyễn Tuấn Minh", gender:"M"},
+  {name:"Tôn Gia Nghi", gender:"F"},
+  {name:"Đoàn Nguyễn Phương Nhi", gender:"F"},
+  {name:"Phan Trọng Phú", gender:"M"},
+  {name:"Lê Trần Duy Phước", gender:"M"},
+  {name:"Phạm Tấn Tài", gender:"M"},
+  {name:"Phan Nguyễn Hoàng Thiện", gender:"M"},
+  {name:"Võ Ngọc Thịnh", gender:"M"},
+  {name:"Phạm Đào Kim Thư", gender:"F"},
+  {name:"Nguyễn Ngọc Bích Trâm", gender:"F"},
+  {name:"Nguyễn Phương Trinh", gender:"F"},
+  {name:"Đặng Lê Ngọc Trọng", gender:"M"},
+  {name:"Nguyễn Thị Mộng Tuyền", gender:"F"},
+  {name:"Nguyễn Minh Tuyết", gender:"F"},
+  {name:"Nguyễn Thị Tường Vy", gender:"F"},
+  {name:"Nguyễn Thị Như Ý", gender:"F"}
+].map((x, i) => ({...x, id: i + 1, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
 
 const themes = {
   Classic:["#ef4444","#f59e0b","#10b981","#3b82f6","#8b5cf6","#ec4899"],
@@ -299,412 +301,783 @@ const themes = {
   Sunset:["#7c2d12","#ea580c","#f97316","#f43f5e","#db2777","#9333ea"]
 };
 
+const STORAGE_KEY = "wheel11a3_v8";
+
 let state = {
-  entries: CLASS,
-  filter:"all",
-  rotation:0,
-  spinning:false,
-  results:[],
-  equalChance:true,
-  duration:6,
-  spinVolume:.45,
-  winVolume:.7,
-  slow:false,
-  showTitle:true,
-  displayDuplicates:false,
-  maxEntries:1000,
-  animateWinner:true,
-  confetti:true,
-  popup:true,
-  autoRemove:false,
-  shadow:true,
-  contours:true,
-  pointerColor:true,
-  theme:"Classic",
-  colors:[...themes.Classic],
-  bg:null,
-  centerImage:null,
-  centerSize:"M",
-  centerText:"CLICK\\nTO SPIN",
-  message:"We have a winner!"
+  entries: CLASS.map(x => ({...x})),
+  filter: "all",
+  rotation: 0,
+  spinning: false,
+  results: [],
+  equalChance: true,
+  duration: 10, // Mặc định thời gian quay 10 giây
+  spinVolume: .45, // Mặc định 45% (âm lượng thực tế đã khuếch đại x3)
+  winVolume: .7,
+  slow: false,
+  showTitle: true,
+  displayDuplicates: false,
+  maxEntries: 1000,
+  animateWinner: true,
+  confetti: true,
+  popup: true,
+  autoRemove: false,
+  shadow: true,
+  contours: true,
+  pointerColor: true,
+  theme: "Classic",
+  colors: [...themes.Classic],
+  bg: null,
+  centerImage: null,
+  centerSize: "M",
+  centerText: "NHẤP ĐỂ\nQUAY",
+  message: "Đã chọn được học sinh may mắn!"
 };
-let currentWinner = null;
-let audioCtx = null, tickTimer = null;
+
+let lastSelectedStudent = null;
+let autoRemoveTimer = null;
+let audioCtx = null;
+let lastPegIndex = -1;
 
 const $ = id => document.getElementById(id);
 const wheel = $("wheel"), ctx = wheel.getContext("2d");
 
 function cloneEntries(){
-  return state.entries.filter(e=>e.enabled && (state.filter==="all" || e.gender===state.filter));
+  return state.entries.filter(e => {
+    const isEnabled = e.enabled !== false;
+    if(!isEnabled) return false;
+    if(state.filter === "all") return true;
+    if(state.filter === "M") return e.gender === "M" || e.gender === "Nam";
+    if(state.filter === "F") return e.gender === "F" || e.gender === "Nữ";
+    return true;
+  });
 }
+
 function pct(){
-  const n=cloneEntries().length; return n ? (100/n).toFixed(2) : "0.00";
+  const n = cloneEntries().length;
+  return n ? (100 / n).toFixed(2) : "0.00";
 }
+
 function toast(msg){
-  const t=$("toast"); t.textContent=msg; t.classList.add("show");
-  clearTimeout(toast.timer); toast.timer=setTimeout(()=>t.classList.remove("show"),1800);
+  const t = $("toast"); t.textContent = msg; t.classList.add("show");
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2200);
 }
+
 function saveLocal(){
-  localStorage.setItem("wheel11a3", JSON.stringify({...state,rotation:0,spinning:false}));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify({...state, rotation: 0, spinning: false}));
 }
+
 function loadLocal(){
-  const raw=localStorage.getItem("wheel11a3");
+  const raw = localStorage.getItem(STORAGE_KEY);
   if(!raw) return;
-  try{
-    const s=JSON.parse(raw);
-    state={...state,...s};
-    if(!state.entries || !state.entries.length) state.entries=CLASS;
-  }catch(e){}
+  try {
+    const s = JSON.parse(raw);
+    state = {...state, ...s};
+    if(state.entries && state.entries.length === CLASS.length){
+      state.entries = state.entries.map((e, idx) => ({
+        ...CLASS[idx],
+        ...e,
+        gender: CLASS[idx].gender
+      }));
+    } else {
+      state.entries = CLASS.map(x => ({...x}));
+    }
+  } catch(e) {}
 }
-function drawWheel(){
-  const dpr=Math.max(1,window.devicePixelRatio||1), rect=wheel.getBoundingClientRect();
-  const size=Math.min(rect.width||700,rect.height||700);
-  if(rect.width && wheel.width !== Math.round(rect.width*dpr)){
-    wheel.width=Math.round(rect.width*dpr); wheel.height=Math.round(rect.height*dpr);
+
+function initCanvasSize(){
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  const rect = wheel.getBoundingClientRect();
+  const w = rect.width || 700;
+  const h = rect.height || 700;
+  if(wheel.width !== Math.round(w * dpr) || wheel.height !== Math.round(h * dpr)){
+    wheel.width = Math.round(w * dpr);
+    wheel.height = Math.round(h * dpr);
   }
-  ctx.setTransform(dpr,0,0,dpr,0,0);
-  const W=wheel.clientWidth,H=wheel.clientHeight,cx=W/2,cy=H/2,R=Math.min(W,H)*.455;
-  ctx.clearRect(0,0,W,H);
-  const list=cloneEntries();
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
+function drawWheel(){
+  initCanvasSize();
+  const W = wheel.clientWidth || 700, H = wheel.clientHeight || 700;
+  const cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.455;
+  ctx.clearRect(0, 0, W, H);
+  const list = cloneEntries();
+
   if(state.bg){
-    const im=new Image(); im.onload=()=>{ctx.save();ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.clip();ctx.globalAlpha=.92;ctx.drawImage(im,cx-R,cy-R,2*R,2*R);ctx.restore(); drawText(list,cx,cy,R);}; im.src=state.bg;
-  }else{
+    const im = new Image();
+    im.onload = () => {
+      ctx.save(); ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.clip();
+      ctx.globalAlpha = .92; ctx.drawImage(im, cx - R, cy - R, 2 * R, 2 * R); ctx.restore();
+      drawAllTexts(list, cx, cy, R);
+    };
+    im.src = state.bg;
+  } else {
     ctx.save();
-    ctx.beginPath();ctx.arc(cx,cy,R+5,0,Math.PI*2);
-    if(state.shadow){ctx.shadowColor="rgba(15,23,42,.24)";ctx.shadowBlur=22;ctx.shadowOffsetY=8}
-    ctx.fillStyle="#fff";ctx.fill();ctx.restore();
-    if(!list.length){drawEmpty(cx,cy,R);return;}
-    const arc=Math.PI*2/list.length;
-    list.forEach((e,i)=>{
-      const a0=state.rotation+i*arc-Math.PI/2;
-      const a1=a0+arc;
-      ctx.beginPath();ctx.moveTo(cx,cy);ctx.arc(cx,cy,R,a0,a1);ctx.closePath();
-      ctx.fillStyle=e.color||state.colors[i%state.colors.length];
+    ctx.beginPath(); ctx.arc(cx, cy, R + 5, 0, Math.PI * 2);
+    if(state.shadow){ ctx.shadowColor = "rgba(15, 23, 42, .24)"; ctx.shadowBlur = 22; ctx.shadowOffsetY = 8; }
+    ctx.fillStyle = "#fff"; ctx.fill(); ctx.restore();
+
+    if(!list.length){ drawEmpty(cx, cy, R); return; }
+    const arc = (Math.PI * 2) / list.length;
+    list.forEach((e, i) => {
+      const a0 = state.rotation + i * arc - Math.PI / 2;
+      const a1 = a0 + arc;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.arc(cx, cy, R, a0, a1); ctx.closePath();
+      ctx.fillStyle = e.color || state.colors[i % state.colors.length];
       ctx.fill();
-      if(state.contours){ctx.strokeStyle="rgba(255,255,255,.9)";ctx.lineWidth=2;ctx.stroke();}
-      drawSegmentText(e,i,a0,arc,cx,cy,R);
+      if(state.contours){ ctx.strokeStyle = "rgba(255, 255, 255, .92)"; ctx.lineWidth = 2; ctx.stroke(); }
+      drawSegmentText(e, i, a0, arc, cx, cy, R);
     });
   }
-  if(!state.bg && state.shadow===false){}
 }
-function drawEmpty(cx,cy,R){
-  ctx.beginPath();ctx.arc(cx,cy,R,0,Math.PI*2);ctx.fillStyle="#f2f4f7";ctx.fill();
-  ctx.fillStyle="#667085";ctx.font="700 18px system-ui";ctx.textAlign="center";ctx.fillText("Không còn học sinh",cx,cy);
+
+function drawEmpty(cx, cy, R){
+  ctx.beginPath(); ctx.arc(cx, cy, R, 0, Math.PI * 2); ctx.fillStyle = "#f2f4f7"; ctx.fill();
+  ctx.fillStyle = "#667085"; ctx.font = "700 18px system-ui"; ctx.textAlign = "center";
+  ctx.fillText("Không còn học sinh nào", cx, cy);
 }
-function drawSegmentText(e,i,a0,arc,cx,cy,R){
-  const mid=a0+arc/2, radius=R*.64;
-  ctx.save();ctx.translate(cx+Math.cos(mid)*radius,cy+Math.sin(mid)*radius);
-  let ang=mid+Math.PI/2;
-  if(Math.cos(mid)<0) ang+=Math.PI;
-  ctx.rotate(ang);
-  const maxW=Math.max(50,R*arc*.9);
-  let fs=Math.max(10,Math.min(22,Math.floor(22*(arc/(Math.PI/10)))));
-  ctx.font=`800 ${fs}px system-ui`;
-  ctx.fillStyle="rgba(255,255,255,.96)";
-  ctx.textAlign="center";ctx.textBaseline="middle";
-  let txt=e.name;
-  while(ctx.measureText(txt).width>maxW && fs>9){fs--;ctx.font=`800 ${fs}px system-ui`;}
-  ctx.shadowColor="rgba(0,0,0,.22)";ctx.shadowBlur=2;
-  ctx.fillText(txt,0,0);
+
+// Cố định cỡ chữ đồng đều (13px), tên quá dài tự động thêm dấu 3 chấm (...)
+function drawSegmentText(e, i, a0, arc, cx, cy, R){
+  const mid = a0 + arc / 2;
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(mid);
+  ctx.textAlign = "right";
+  ctx.textBaseline = "middle";
+
+  const fixedFontSize = 13;
+  ctx.font = `700 ${fixedFontSize}px Inter, system-ui, sans-serif`;
+
+  const centerRadius = (state.centerSize === "XL" ? 88 : state.centerSize === "L" ? 73 : state.centerSize === "S" ? 44 : 59) + 12;
+  const maxTextWidth = R - centerRadius - 15;
+
+  let txt = e.name;
+  if (ctx.measureText(txt).width > maxTextWidth) {
+    while (txt.length > 0 && ctx.measureText(txt + "...").width > maxTextWidth) {
+      txt = txt.slice(0, -1);
+    }
+    txt = txt + "...";
+  }
+
+  ctx.fillStyle = "#ffffff";
+  ctx.shadowColor = "rgba(0, 0, 0, 0.45)";
+  ctx.shadowBlur = 3;
+  ctx.shadowOffsetX = 1;
+  ctx.shadowOffsetY = 1;
+  ctx.fillText(txt, R - 16, 0);
   ctx.restore();
 }
-function drawText(list,cx,cy,R){
-  if(!list.length){drawEmpty(cx,cy,R);return;}
-  const arc=Math.PI*2/list.length;
-  list.forEach((e,i)=>drawSegmentText(e,i,state.rotation+i*arc-Math.PI/2,arc,cx,cy,R));
+
+function drawAllTexts(list, cx, cy, R){
+  if(!list.length){ drawEmpty(cx, cy, R); return; }
+  const arc = (Math.PI * 2) / list.length;
+  list.forEach((e, i) => drawSegmentText(e, i, state.rotation + i * arc - Math.PI / 2, arc, cx, cy, R));
 }
-function updateUI(){
-  const list=cloneEntries();
-  $("countBadge").textContent=`${list.length} mục`;
-  $("probBadge").textContent=list.length?`Mỗi bạn ≈ ${pct()}%`:"0%";
-  $("wheelTitle").style.display=state.showTitle?"block":"none";
-  $("wheelTitle").textContent=`Vòng quay 11A3 • ${state.filter==="all"?"Cả lớp":state.filter==="M"?"Nam":"Nữ"}`;
-  $("centerLabel").style.width={S:88,M:118,L:145,XL:175}[state.centerSize];
-  $("centerLabel").style.height={S:88,M:118,L:145,XL:175}[state.centerSize];
-  const img=$("centerImg"), span=$("centerLabel span");
-  if(state.centerImage){img.src=state.centerImage;img.style.display="block";span.style.display="none"}
-  else{img.style.display="none";span.style.display="block";span.innerHTML=state.centerText.replace(/\\n/g,"<br>")}
-  document.querySelectorAll(".filter").forEach(b=>b.classList.toggle("active",b.dataset.filter===state.filter));
-  renderResults(); renderPanel();
+
+// Chuyển đổi bộ lọc Cả lớp / Nam / Nữ
+function setFilter(filterType){
+  if(state.spinning) return;
+  state.filter = filterType;
+  
+  document.querySelectorAll(".filter").forEach(btn => {
+    btn.classList.toggle("active", btn.getAttribute("data-filter") === filterType);
+  });
+
   drawWheel();
+  saveLocal();
+  updateUI();
+
+  const count = cloneEntries().length;
+  toast(filterType === "all" ? `Đã chọn: Cả lớp (${count} học sinh)` : filterType === "M" ? `Đã chọn: Nam (${count} học sinh)` : `Đã chọn: Nữ (${count} học sinh)`);
 }
+
+function updateUI(){
+  drawWheel();
+
+  const list = cloneEntries();
+  if($("countBadge")) $("countBadge").textContent = `${list.length} học sinh`;
+  if($("probBadge")) $("probBadge").textContent = list.length ? `Mỗi bạn ≈ ${pct()}%` : "0%";
+  if($("wheelTitle")) {
+    $("wheelTitle").style.display = state.showTitle ? "block" : "none";
+    $("wheelTitle").textContent = `Vòng quay 11A3 • ${state.filter === "all" ? "Cả lớp" : state.filter === "M" ? "Học sinh Nam" : "Học sinh Nữ"}`;
+  }
+
+  document.querySelectorAll(".filter").forEach(b => {
+    b.classList.toggle("active", b.getAttribute("data-filter") === state.filter);
+  });
+
+  if($("centerLabel")) {
+    const labelSize = {S: 88, M: 118, L: 145, XL: 175}[state.centerSize] || 118;
+    $("centerLabel").style.width = labelSize + "px";
+    $("centerLabel").style.height = labelSize + "px";
+  }
+
+  const img = $("centerImg"), span = document.querySelector("#centerLabel span");
+  if(img && span){
+    if(state.centerImage){
+      img.src = state.centerImage; img.style.display = "block"; span.style.display = "none";
+    } else {
+      img.style.display = "none"; span.style.display = "block";
+      span.innerHTML = state.centerText.replace(/\n/g, "<br>");
+    }
+  }
+
+  try { renderResults(); } catch(e){}
+  try { renderPanel(); } catch(e){}
+}
+
 function renderResults(){
-  const box=$("resultList");
-  if(!state.results.length){box.innerHTML='<div class="empty">Chưa có kết quả. Hãy quay thử!</div>';return}
-  box.innerHTML=state.results.map((r,i)=>`<div class="result-chip"><span>${i+1}. ${escapeHtml(r.name)}</span><small>${new Date(r.time).toLocaleTimeString("vi-VN",{hour:"2-digit",minute:"2-digit"})}</small></div>`).join("");
+  const box = $("resultList");
+  if(!box) return;
+  if(!state.results.length){
+    box.innerHTML = '<div class="empty">Chưa có kết quả nào. Hãy thử quay nhé!</div>';
+    return;
+  }
+  box.innerHTML = state.results.map((r, i) => `
+    <div class="result-chip">
+      <span>${i + 1}. ${escapeHtml(r.name)}</span>
+      <small>${new Date(r.time).toLocaleTimeString("vi-VN", {hour: "2-digit", minute: "2-digit"})}</small>
+    </div>
+  `).join("");
 }
+
 function renderPanel(){
-  const active=document.querySelector(".tab.active")?.dataset.tab||"standard";
-  if(active==="standard") renderStandard();
-  if(active==="advanced") renderAdvanced();
-  if(active==="options") renderOptions();
+  const active = document.querySelector(".tab.active")?.dataset.tab || "standard";
+  if(active === "standard") renderStandard();
+  if(active === "advanced") renderAdvanced();
+  if(active === "options") renderOptions();
 }
+
 function renderStandard(){
-  $("panelScroll").innerHTML=`
+  $("panelScroll").innerHTML = `
   <div class="section">
-    <div class="section-title">Danh sách lớp cố định</div>
-    <div class="note">Danh sách đã được điền sẵn từ bảng lớp. Hai học sinh chuyển đi đã được loại khỏi vòng quay. Các học sinh đã nghỉ được bỏ qua.</div>
+    <div class="section-title">Danh sách lớp</div>
+    <div class="note">Danh sách gồm 34 học sinh lớp 11A3 (20 Nam, 14 Nữ).</div>
   </div>
   <div class="section">
     <div class="section-title">Điều khiển danh sách</div>
     <div class="entry-actions">
-      <button class="btn" onclick="shuffleEntries()">Shuffle</button>
-      <button class="btn" onclick="sortEntries()">Sort A–Z</button>
+      <button class="btn" onclick="shuffleEntries()">Xáo trộn danh sách</button>
       <button class="btn" onclick="restoreEntries()">Khôi phục 34 HS</button>
     </div>
   </div>
   <div class="section">
-    <div class="section-title">Xác suất</div>
-    <label class="check"><input id="equalChance" type="checkbox" ${state.equalChance?"checked":""}> Chia đều cơ hội cho các học sinh đang được chọn</label>
-    <div class="note">Mặc định: mỗi bạn trong nhóm hiện tại có xác suất bằng nhau. Chọn <b>Cả lớp / Nam / Nữ</b> ngay dưới vòng quay.</div>
+    <div class="section-title">Xác suất trúng</div>
+    <label class="check"><input id="equalChance" type="checkbox" ${state.equalChance ? "checked" : ""}> Chia đều cơ hội cho các học sinh đang chọn</label>
+    <div class="note">Mặc định: xác suất chia đều như nhau. Chọn <b>Cả lớp / Nam / Nữ</b> ngay dưới vòng quay.</div>
   </div>
   <div class="section">
     <div class="section-title">Hình ảnh</div>
     <div class="entry-actions">
-      <button class="btn" onclick="chooseBg()">Add background image</button>
-      <button class="btn" onclick="chooseCenter()">Add center image</button>
+      <button class="btn" onclick="chooseBg()">Thêm ảnh nền vòng</button>
+      <button class="btn" onclick="chooseCenter()">Thêm ảnh tâm</button>
       <button class="btn" onclick="clearImages()">Xóa ảnh</button>
     </div>
   </div>
   <div class="section">
-    <div class="section-title">Thông tin nhanh</div>
-    <div class="note"><b>Nam:</b> ${state.entries.filter(e=>e.gender==="M").length} &nbsp;•&nbsp; <b>Nữ:</b> ${state.entries.filter(e=>e.gender==="F").length} &nbsp;•&nbsp; <b>Tổng:</b> ${state.entries.length}</div>
+    <div class="section-title">Thông tin số lượng</div>
+    <div class="note"><b>Nam:</b> ${state.entries.filter(e => e.gender === "M" && e.enabled).length}/20 &nbsp;•&nbsp; <b>Nữ:</b> ${state.entries.filter(e => e.gender === "F" && e.enabled).length}/14 &nbsp;•&nbsp; <b>Đang bật:</b> ${state.entries.filter(e => e.enabled).length}/34</div>
   </div>`;
-  $("equalChance").onchange=e=>{state.equalChance=e.target.checked;saveLocal();toast("Đã cập nhật xác suất");};
+  const eq = $("equalChance");
+  if(eq) eq.onchange = e => { state.equalChance = e.target.checked; saveLocal(); toast("Đã cập nhật chế độ xác suất"); };
 }
+
 function renderAdvanced(){
-  $("panelScroll").innerHTML=`
+  $("panelScroll").innerHTML = `
   <div class="section">
-    <div class="section-title">Từng học sinh</div>
-    <div class="note" style="margin-bottom:9px">Có thể bật/tắt ô, đổi màu, di chuyển thứ tự và chỉnh trọng số. Khi “Chia đều cơ hội” bật, trọng số cá nhân được bỏ qua.</div>
-    <div class="entries-list">${state.entries.map((e,i)=>`
-      <div class="entry ${e.enabled?"":"off"}">
-        <div class="entry-dot" style="background:${e.color||state.colors[i%state.colors.length]}"></div>
+    <div class="section-title">Danh sách từng học sinh</div>
+    <div class="note" style="margin-bottom:9px">Bật/tắt ô, đổi màu hoặc di chuyển vị trí. Khi bật “Chia đều cơ hội”, trọng số cá nhân sẽ được bỏ qua.</div>
+    <div class="entries-list">${state.entries.map((e, i) => `
+      <div class="entry ${e.enabled ? "" : "off"}">
+        <div class="entry-dot" style="background:${e.color || state.colors[i % state.colors.length]}"></div>
         <div>
           <div class="entry-name">${escapeHtml(e.name)}</div>
-          <div class="entry-meta">${e.gender==="M"?"Nam":"Nữ"} • Weight ${e.weight}</div>
+          <div class="entry-meta">${e.gender === "M" ? "Nam" : "Nữ"} • Trọng số: ${e.weight}</div>
         </div>
         <div class="entry-tools">
-          <button title="Bật/tắt" onclick="toggleEntry(${i})">${e.enabled?"◉":"○"}</button>
-          <button title="Lên" onclick="moveEntry(${i},-1)">↑</button>
-          <button title="Xuống" onclick="moveEntry(${i},1)">↓</button>
-          <button title="Màu" onclick="pickEntryColor(${i})">●</button>
-          <button title="Ảnh" onclick="pickEntryImage(${i})">▧</button>
+          <button title="Bật/Tắt" onclick="toggleEntry(${i})">${e.enabled ? "◉" : "○"}</button>
+          <button title="Chuyển lên" onclick="moveEntry(${i}, -1)">↑</button>
+          <button title="Chuyển xuống" onclick="moveEntry(${i}, 1)">↓</button>
+          <button title="Chọn màu" onclick="pickEntryColor(${i})">●</button>
+          <button title="Thêm ảnh" onclick="pickEntryImage(${i})">▧</button>
         </div>
       </div>`).join("")}</div>
   </div>
   <div class="section">
-    <div class="section-title">Tin nhắn chúc mừng</div>
+    <div class="section-title">Lời chúc mừng</div>
     <input class="text" id="globalMessage" style="width:100%" value="${escapeAttr(state.message)}">
-    <div class="note" style="margin-top:7px">Có thể đặt lời nhắn riêng trong mã dữ liệu từng học sinh; giao diện lớp đang dùng thông điệp chung để giữ đơn giản.</div>
   </div>`;
-  $("globalMessage").oninput=e=>{state.message=e.target.value;saveLocal();};
+  const gm = $("globalMessage");
+  if(gm) gm.oninput = e => { state.message = e.target.value; saveLocal(); };
 }
+
 function renderOptions(){
-  $("panelScroll").innerHTML=`
+  $("panelScroll").innerHTML = `
   <div class="section">
     <div class="section-title">Trong khi quay</div>
-    <div class="row"><label>Spin time <b>${state.duration}s</b></label><input id="duration" type="range" min="1" max="60" value="${state.duration}"></div>
-    <div class="row"><label>Âm lượng khi quay <b>${Math.round(state.spinVolume*100)}%</b></label><input id="spinVol" type="range" min="0" max="100" value="${state.spinVolume*100}"></div>
-    <label class="check"><input id="slow" type="checkbox" ${state.slow?"checked":""}> Spin slowly</label>
-    <label class="check"><input id="showTitle" type="checkbox" ${state.showTitle?"checked":""}> Show title</label>
-    <label class="check"><input id="dupes" type="checkbox" ${state.displayDuplicates?"checked":""}> Display duplicates</label>
-    <div class="row"><label>Maximum entries</label><input id="maxEntries" type="number" min="4" max="1000" value="${state.maxEntries}"></div>
+    <div class="row"><label>Thời gian quay: <b id="durationText">${state.duration}s</b></label><input id="duration" type="range" min="1" max="60" value="${state.duration}"></div>
+    <div class="row"><label>Âm lượng khi quay: <b id="spinVolText">${Math.round(state.spinVolume * 100)}%</b></label><input id="spinVol" type="range" min="0" max="100" value="${state.spinVolume * 100}"></div>
+    <label class="check"><input id="slow" type="checkbox" ${state.slow ? "checked" : ""}> Quay chậm rãi</label>
+    <label class="check"><input id="showTitle" type="checkbox" ${state.showTitle ? "checked" : ""}> Hiển thị tiêu đề</label>
+    <label class="check"><input id="dupes" type="checkbox" ${state.displayDuplicates ? "checked" : ""}> Hiển thị mục trùng lặp</label>
+    <div class="row"><label>Số mục tối đa trên vòng</label><input id="maxEntries" type="number" min="4" max="1000" value="${state.maxEntries}"></div>
   </div>
   <div class="section">
-    <div class="section-title">Sau khi quay</div>
-    <div class="row"><label>Âm lượng chúc mừng <b>${Math.round(state.winVolume*100)}%</b></label><input id="winVol" type="range" min="0" max="100" value="${state.winVolume*100}"></div>
-    <label class="check"><input id="animateWinner" type="checkbox" ${state.animateWinner?"checked":""}> Animate winning entry</label>
-    <label class="check"><input id="confettiOn" type="checkbox" ${state.confetti?"checked":""}> Launch confetti</label>
-    <label class="check"><input id="popup" type="checkbox" ${state.popup?"checked":""}> Hiển thị popup kết quả</label>
-    <label class="check"><input id="autoRemove" type="checkbox" ${state.autoRemove?"checked":""}> Auto-remove winner after 5 seconds</label>
+    <div class="section-title">Sau khi có kết quả</div>
+    <div class="row"><label>Âm lượng chúc mừng: <b id="winVolText">${Math.round(state.winVolume * 100)}%</b></label><input id="winVol" type="range" min="0" max="100" value="${state.winVolume * 100}"></div>
+    <label class="check"><input id="animateWinner" type="checkbox" ${state.animateWinner ? "checked" : ""}> Hiệu ứng động cho ô trúng</label>
+    <label class="check"><input id="confettiOn" type="checkbox" ${state.confetti ? "checked" : ""}> Bắn pháo hoa giấy</label>
+    <label class="check"><input id="popup" type="checkbox" ${state.popup ? "checked" : ""}> Hiển thị popup kết quả</label>
+    <label class="check"><input id="autoRemove" type="checkbox" ${state.autoRemove ? "checked" : ""}> Tự động loại học sinh sau 5 giây</label>
   </div>
   <div class="section">
-    <div class="section-title">Appearance</div>
-    <div class="row"><label>Chủ đề</label><select id="themeSelect">${Object.keys(themes).map(t=>`<option ${state.theme===t?"selected":""}>${t}</option>`).join("")}</select></div>
-    <div class="theme-grid">${Object.entries(themes).map(([t,c])=>`<button class="theme" onclick="applyTheme('${t}')"><div class="theme-swatch" style="background:linear-gradient(90deg,${c.join(",")})"></div>${t}</button>`).join("")}</div>
-    <div class="section-title" style="margin-top:14px">Customize colors</div>
-    <div class="color-grid">${state.colors.map((c,i)=>`<input type="color" value="${c}" onchange="setColor(${i},this.value)">`).join("")}</div>
-    <label class="check"><input id="shadow" type="checkbox" ${state.shadow?"checked":""}> Wheel shadow</label>
-    <label class="check"><input id="contours" type="checkbox" ${state.contours?"checked":""}> Contours</label>
-    <label class="check"><input id="pointerColor" type="checkbox" ${state.pointerColor?"checked":""}> Pointer changes color</label>
-    <div class="section-title" style="margin-top:14px">Center image</div>
+    <div class="section-title">Giao diện & Màu sắc</div>
+    <div class="row"><label>Chủ đề màu</label><select id="themeSelect">${Object.keys(themes).map(t => `<option ${state.theme === t ? "selected" : ""}>${t}</option>`).join("")}</select></div>
+    <div class="theme-grid">${Object.entries(themes).map(([t, c]) => `<button class="theme" onclick="applyTheme('${t}')"><div class="theme-swatch" style="background:linear-gradient(90deg,${c.join(",")})"></div>${t}</button>`).join("")}</div>
+    <div class="section-title" style="margin-top:14px">Tùy chỉnh từng màu</div>
+    <div class="color-grid">${state.colors.map((c, i) => `<input type="color" value="${c}" onchange="setColor(${i}, this.value)">`).join("")}</div>
+    <label class="check"><input id="shadow" type="checkbox" ${state.shadow ? "checked" : ""}> Đổ bóng vòng quay</label>
+    <label class="check"><input id="contours" type="checkbox" ${state.contours ? "checked" : ""}> Đường viền ngăn ô</label>
+    <label class="check"><input id="pointerColor" type="checkbox" ${state.pointerColor ? "checked" : ""}> Kim đổi màu theo ô trúng</label>
+    <div class="section-title" style="margin-top:14px">Ảnh tâm vòng quay</div>
     <div class="entry-actions">
-      <button class="btn" onclick="chooseCenter()">Upload</button>
-      <button class="btn" onclick="clearCenter()">Xóa</button>
-      ${["S","M","L","XL"].map(s=>`<button class="btn ${state.centerSize===s?"primary":""}" onclick="setCenterSize('${s}')">${s}</button>`).join("")}
+      <button class="btn" onclick="chooseCenter()">Tải ảnh lên</button>
+      <button class="btn" onclick="clearCenter()">Xóa ảnh</button>
+      ${["S", "M", "L", "XL"].map(s => `<button class="btn ${state.centerSize === s ? "primary" : ""}" onclick="setCenterSize('${s}')">${s}</button>`).join("")}
     </div>
   </div>
   <div class="section">
-    <div class="section-title">Nền trang</div>
+    <div class="section-title">Hình nền trang</div>
     <div class="entry-actions">
-      <button class="btn" onclick="setPageGradient()">Gradient</button>
+      <button class="btn" onclick="setPageGradient()">Đổi dải màu gradient</button>
       <button class="btn" onclick="resetPageBg()">Mặc định</button>
     </div>
   </div>`;
   bindOptions();
 }
+
 function bindOptions(){
-  const map=[
-    ["duration",v=>state.duration=+v],["spinVol",v=>state.spinVolume=+v/100],["slow",v=>state.slow=v],
-    ["showTitle",v=>state.showTitle=v],["dupes",v=>state.displayDuplicates=v],["maxEntries",v=>state.maxEntries=Math.max(4,Math.min(1000,+v||1000))],
-    ["winVol",v=>state.winVolume=+v/100],["animateWinner",v=>state.animateWinner=v],["confettiOn",v=>state.confetti=v],
-    ["popup",v=>state.popup=v],["autoRemove",v=>state.autoRemove=v],["shadow",v=>state.shadow=v],["contours",v=>state.contours=v],
-    ["pointerColor",v=>state.pointerColor=v]
+  if($("duration")) $("duration").oninput = e => {
+    state.duration = +e.target.value;
+    if($("durationText")) $("durationText").textContent = state.duration + "s";
+    saveLocal();
+  };
+  if($("spinVol")) $("spinVol").oninput = e => {
+    state.spinVolume = +e.target.value / 100;
+    if($("spinVolText")) $("spinVolText").textContent = Math.round(state.spinVolume * 100) + "%";
+    saveLocal();
+  };
+  if($("winVol")) $("winVol").oninput = e => {
+    state.winVolume = +e.target.value / 100;
+    if($("winVolText")) $("winVolText").textContent = Math.round(state.winVolume * 100) + "%";
+    saveLocal();
+  };
+
+  const simpleChecks = [
+    ["slow", v => state.slow = v],
+    ["showTitle", v => { state.showTitle = v; if($("wheelTitle")) $("wheelTitle").style.display = v ? "block" : "none"; }],
+    ["dupes", v => state.displayDuplicates = v],
+    ["maxEntries", v => state.maxEntries = Math.max(4, Math.min(1000, +v || 1000))],
+    ["animateWinner", v => state.animateWinner = v],
+    ["confettiOn", v => state.confetti = v],
+    ["popup", v => state.popup = v],
+    ["autoRemove", v => state.autoRemove = v],
+    ["shadow", v => { state.shadow = v; drawWheel(); }],
+    ["contours", v => { state.contours = v; drawWheel(); }],
+    ["pointerColor", v => state.pointerColor = v]
   ];
-  map.forEach(([id,fn])=>{const el=$(id); if(!el)return;el.oninput=el.onchange=()=>{fn(el.type==="checkbox"?el.checked:el.value);saveLocal();updateUI();};});
-  $("themeSelect").onchange=e=>applyTheme(e.target.value);
+
+  simpleChecks.forEach(([id, fn]) => {
+    const el = $(id);
+    if(!el) return;
+    el.onchange = () => {
+      fn(el.type === "checkbox" ? el.checked : el.value);
+      saveLocal();
+    };
+  });
+
+  if($("themeSelect")) $("themeSelect").onchange = e => applyTheme(e.target.value);
 }
-function escapeHtml(s){return s.replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]))}
-function escapeAttr(s){return escapeHtml(s).replace(/\\n/g,"&#10;")}
-function shuffleEntries(){for(let i=state.entries.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[state.entries[i],state.entries[j]]=[state.entries[j],state.entries[i]]}saveLocal();updateUI();toast("Đã xáo trộn")}
-function sortEntries(){state.entries.sort((a,b)=>a.name.localeCompare(b.name,"vi"));saveLocal();updateUI();toast("Đã sắp xếp A–Z")}
-function restoreEntries(){state.entries=CLASS.map(x=>({...x,enabled:true,weight:1,color:null,image:null,message:"We have a winner!"}));saveLocal();updateUI();toast("Đã khôi phục 34 học sinh")}
-function toggleEntry(i){state.entries[i].enabled=!state.entries[i].enabled;saveLocal();updateUI()}
-function moveEntry(i,d){const j=i+d;if(j<0||j>=state.entries.length)return;[state.entries[i],state.entries[j]]=[state.entries[j],state.entries[i]];saveLocal();updateUI()}
+
+function escapeHtml(s){ return (s || "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+function escapeAttr(s){ return escapeHtml(s).replace(/\n/g, "&#10;"); }
+
+function shuffleEntries(){
+  for(let i = state.entries.length - 1; i > 0; i--){
+    let j = Math.floor(Math.random() * (i + 1));
+    [state.entries[i], state.entries[j]] = [state.entries[j], state.entries[i]];
+  }
+  saveLocal(); updateUI(); toast("Đã xáo trộn danh sách học sinh ngẫu nhiên");
+}
+
+function restoreEntries(){
+  state.entries = CLASS.map(x => ({...x, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
+  saveLocal(); updateUI(); toast("Đã khôi phục đủ 34 học sinh ban đầu");
+}
+
+function toggleEntry(i){
+  state.entries[i].enabled = !state.entries[i].enabled;
+  saveLocal(); updateUI();
+}
+
+function moveEntry(i, d){
+  const j = i + d;
+  if(j < 0 || j >= state.entries.length) return;
+  [state.entries[i], state.entries[j]] = [state.entries[j], state.entries[i]];
+  saveLocal(); updateUI();
+}
+
 function pickEntryColor(i){
-  const c=prompt("Nhập mã màu HEX, ví dụ #ff6b6b:",state.entries[i].color||state.colors[i%state.colors.length]);
-  if(c&&/^#[0-9a-f]{6}$/i.test(c)){state.entries[i].color=c;saveLocal();updateUI();}
+  const c = prompt("Nhập mã màu HEX cho ô này (ví dụ #ff6b6b):", state.entries[i].color || state.colors[i % state.colors.length]);
+  if(c && /^#[0-9a-f]{6}$/i.test(c)){ state.entries[i].color = c; saveLocal(); updateUI(); }
 }
+
 function pickEntryImage(i){
-  const input=document.createElement("input");input.type="file";input.accept="image/*";
-  input.onchange=()=>{const f=input.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.entries[i].image=r.result;saveLocal();toast("Đã thêm ảnh cho "+state.entries[i].name)};r.readAsDataURL(f)};
+  const input = document.createElement("input"); input.type = "file"; input.accept = "image/*";
+  input.onchange = () => {
+    const f = input.files[0]; if(!f) return;
+    const r = new FileReader();
+    r.onload = () => { state.entries[i].image = r.result; saveLocal(); toast("Đã thêm ảnh cho " + state.entries[i].name); };
+    r.readAsDataURL(f);
+  };
   input.click();
 }
-function applyTheme(t){state.theme=t;state.colors=[...themes[t]];saveLocal();updateUI();toast("Đã chọn theme "+t)}
-function setColor(i,c){state.colors[i]=c;saveLocal();drawWheel()}
-function chooseBg(){$("bgInput").click()}
-function chooseCenter(){$("centerInput").click()}
-$("bgInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.bg=r.result;saveLocal();updateUI()};r.readAsDataURL(f)}
-$("centerInput").onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{state.centerImage=r.result;saveLocal();updateUI()};r.readAsDataURL(f)}
-function clearImages(){state.bg=null;state.centerImage=null;saveLocal();updateUI()}
-function clearCenter(){state.centerImage=null;saveLocal();updateUI()}
-function setCenterSize(s){state.centerSize=s;saveLocal();updateUI()}
-function setPageGradient(){document.body.style.background="radial-gradient(circle at 15% 15%,rgba(99,91,255,.24),transparent 30%),radial-gradient(circle at 85% 80%,rgba(14,165,233,.18),transparent 28%),linear-gradient(135deg,#e0e7ff,#f0fdfa)";toast("Đã đổi nền")}
-function resetPageBg(){document.body.style.background="";toast("Đã khôi phục nền")}
-function weightedPick(list){
-  if(!list.length)return null;
-  if(state.equalChance)return list[Math.floor(Math.random()*list.length)];
-  const total=list.reduce((s,e)=>s+Math.max(.01,+e.weight||1),0);
-  let r=Math.random()*total;
-  for(const e of list){r-=Math.max(.01,+e.weight||1);if(r<=0)return e}
-  return list[list.length-1];
+
+function applyTheme(t){
+  state.theme = t; state.colors = [...themes[t]]; saveLocal(); updateUI(); toast("Đã chọn chủ đề " + t);
 }
+
+function setColor(i, c){ state.colors[i] = c; saveLocal(); drawWheel(); }
+function chooseBg(){ $("bgInput").click(); }
+function chooseCenter(){ $("centerInput").click(); }
+
+$("bgInput").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader(); r.onload = () => { state.bg = r.result; saveLocal(); updateUI(); }; r.readAsDataURL(f);
+};
+
+$("centerInput").onchange = e => {
+  const f = e.target.files[0]; if(!f) return;
+  const r = new FileReader(); r.onload = () => { state.centerImage = r.result; saveLocal(); updateUI(); }; r.readAsDataURL(f);
+};
+
+function clearImages(){ state.bg = null; state.centerImage = null; saveLocal(); updateUI(); toast("Đã xóa ảnh"); }
+function clearCenter(){ state.centerImage = null; saveLocal(); updateUI(); }
+function setCenterSize(s){ state.centerSize = s; saveLocal(); updateUI(); }
+function setPageGradient(){
+  document.body.style.background = "radial-gradient(circle at 15% 15%,rgba(99,91,255,.24),transparent 30%),radial-gradient(circle at 85% 80%,rgba(14,165,233,.18),transparent 28%),linear-gradient(135deg,#e0e7ff,#f0fdfa)";
+  toast("Đã đổi hình nền gradient");
+}
+function resetPageBg(){ document.body.style.background = ""; toast("Đã khôi phục nền mặc định"); }
+
 function ensureAudio(){
-  if(!audioCtx)audioCtx=new (window.AudioContext||window.webkitAudioContext)();
-  if(audioCtx.state==="suspended")audioCtx.resume();
+  if(!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if(audioCtx.state === "suspended") audioCtx.resume();
 }
-function tick(){
-  if(!state.spinning || state.spinVolume<=0)return;
-  ensureAudio();
-  const o=audioCtx.createOscillator(),g=audioCtx.createGain();
-  o.frequency.value=700+Math.random()*250;o.type="square";
-  g.gain.setValueAtTime(0.0001,audioCtx.currentTime);g.gain.exponentialRampToValueAtTime(.055*state.spinVolume,audioCtx.currentTime+.005);g.gain.exponentialRampToValueAtTime(.0001,audioCtx.currentTime+.045);
-  o.connect(g);g.connect(audioCtx.destination);o.start();o.stop(audioCtx.currentTime+.05);
+
+// Âm thanh gõ nấc bánh xe (X3 âm lượng)
+function playTickSound(){
+  if(state.spinVolume <= 0) return;
+  try {
+    ensureAudio();
+    const t = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = "triangle";
+    osc.frequency.setValueAtTime(800, t);
+    osc.frequency.exponentialRampToValueAtTime(140, t + 0.016);
+    gain.gain.setValueAtTime(0.001, t);
+    gain.gain.linearRampToValueAtTime(0.38 * state.spinVolume, t + 0.002);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.016);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(t); osc.stop(t + 0.018);
+  } catch(e) {}
 }
-function winSound(){
-  if(state.winVolume<=0)return;ensureAudio();
-  [523,659,784,1047].forEach((freq,i)=>{
-    const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type="sine";o.frequency.value=freq;
-    const t=audioCtx.currentTime+i*.11;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.18*state.winVolume,t+.025);g.gain.exponentialRampToValueAtTime(.0001,t+.23);o.connect(g);g.connect(audioCtx.destination);o.start(t);o.stop(t+.24);
-  });
+
+// Âm thanh chúc mừng (X3 âm lượng)
+function playWinSound(){
+  if(state.winVolume <= 0) return;
+  try {
+    ensureAudio();
+    [523.25, 659.25, 783.99, 1046.5].forEach((freq, i) => {
+      const o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = freq;
+      const t = audioCtx.currentTime + i * 0.11;
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.55 * state.winVolume, t + 0.025);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.24);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + 0.25);
+    });
+  } catch(e) {}
 }
+
 function confetti(){
-  if(!state.confetti)return;
-  const c=$("confetti");c.innerHTML="";
-  for(let i=0;i<85;i++){const x=document.createElement("i");x.style.left=Math.random()*100+"%";x.style.top=(-10-Math.random()*20)+"%";x.style.background=`hsl(${Math.random()*360},85%,60%)`;x.style.transform=`rotate(${Math.random()*180}deg)`;x.style.animationDelay=(Math.random()*.6)+"s";c.appendChild(x)}
-  setTimeout(()=>c.innerHTML="",3300);
+  if(!state.confetti) return;
+  const c = $("confetti"); c.innerHTML = "";
+  for(let i = 0; i < 85; i++){
+    const x = document.createElement("i");
+    x.style.left = Math.random() * 100 + "%";
+    x.style.top = (-10 - Math.random() * 20) + "%";
+    x.style.background = `hsl(${Math.random() * 360}, 85%, 60%)`;
+    x.style.transform = `rotate(${Math.random() * 180}deg)`;
+    x.style.animationDelay = (Math.random() * 0.6) + "s";
+    c.appendChild(x);
+  }
+  setTimeout(() => c.innerHTML = "", 3300);
 }
+
+// Chuyển động quay theo từng giai đoạn: 
+// 3s đầu quay siêu nhanh -> giây thứ 4 chậm dần -> giây 7-8-9-10 cực chậm, nín thở giằng co
 function spin(){
-  if(state.spinning)return;
-  const list=cloneEntries();
-  if(!list.length){toast("Không có học sinh đang bật trong nhóm này");return}
-  if(list.length>state.maxEntries){toast("Vượt quá giới hạn hiển thị");return}
+  if(state.spinning) return;
+  const list = cloneEntries();
+  if(!list.length){ toast("Không còn học sinh nào trong nhóm này"); return; }
+  if(list.length > state.maxEntries){ toast("Vượt quá số lượng mục hiển thị tối đa"); return; }
+  
   ensureAudio();
-  state.spinning=true;
-  currentWinner=weightedPick(list);
-  const idx=list.findIndex(e=>e.id===currentWinner.id), arc=Math.PI*2/list.length;
-  let targetBase=-(idx+.5)*arc+Math.PI/2;
-  let delta=((targetBase-state.rotation)%(Math.PI*2)+Math.PI*2)%(Math.PI*2);
-  const spins=(state.slow?2:5)+Math.floor(Math.random()*3);
-  const start=state.rotation,end=state.rotation+spins*Math.PI*2+delta;
-  const dur=state.duration*1000;
-  const t0=performance.now();
-  let lastTick=0;
-  function ease(t){return 1-Math.pow(1-t,4)}
+  state.spinning = true;
+
+  const arc = (Math.PI * 2) / list.length;
+  // Bứt tốc quay từ 16 đến 22 vòng
+  const fullTurns = (state.slow ? 8 : 16) + Math.floor(Math.random() * 6);
+  // Dừng ngẫu nhiên liên tục ở bất kỳ vị trí nào trên ô
+  const randomContinuousAngle = Math.random() * (Math.PI * 2);
+
+  const start = state.rotation;
+  const end = start + fullTurns * Math.PI * 2 + randomContinuousAngle;
+  const dur = state.duration * 1000;
+  const t0 = performance.now();
+  lastPegIndex = -1;
+
+  // Đường cong giảm tốc: Nhanh ở 30% đầu (3s đầu), giảm tốc ở giữa, và cực chậm ở 35% cuối (giây 7, 8, 9, 10)
+  function ease(t){
+    return 1 - Math.pow(1 - t, 3.8);
+  }
+
   function frame(now){
-    const p=Math.min(1,(now-t0)/dur), e=ease(p);
-    state.rotation=start+(end-start)*e;
+    const p = Math.min(1, (now - t0) / dur);
+    const e = ease(p);
+    state.rotation = start + (end - start) * e;
     drawWheel();
-    if(now-lastTick>Math.max(35,140*(1-p))){tick();lastTick=now}
-    if(p<1)requestAnimationFrame(frame);else finishSpin();
+
+    // Phát âm thanh và hiệu ứng rung nảy kim khi mỗi nấc đi qua
+    const currentPeg = Math.floor((state.rotation + Math.PI / 2) / arc);
+    if(currentPeg !== lastPegIndex){
+      playTickSound();
+      lastPegIndex = currentPeg;
+
+      const pointer = $("wheelPointer");
+      if(pointer){
+        pointer.style.transform = "translateY(-50%) rotate(-6deg)";
+        clearTimeout(pointer.twitchTimer);
+        pointer.twitchTimer = setTimeout(() => {
+          pointer.style.transform = "translateY(-50%) rotate(0deg)";
+        }, 35);
+      }
+
+      if(state.pointerColor){
+        const activeIdx = Math.floor(((Math.PI * 2) - ((state.rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / arc) % list.length;
+        if(list[activeIdx] && pointer){
+          pointer.style.borderRightColor = list[activeIdx].color || state.colors[activeIdx % state.colors.length];
+        }
+      }
+    }
+
+    if(p < 1) requestAnimationFrame(frame);
+    else finishSpin();
   }
   requestAnimationFrame(frame);
 }
+
 function finishSpin(){
-  state.spinning=false;
-  state.rotation=((state.rotation%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
-  const w=currentWinner;if(!w)return;
-  state.results.unshift({name:w.name,id:w.id,time:Date.now()});
-  if(state.results.length>200)state.results.length=200;
-  saveLocal();renderResults();winSound();confetti();
+  state.spinning = false;
+  state.rotation = ((state.rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2);
+  const list = cloneEntries();
+  if(!list.length) return;
+
+  // Xác định người trúng thưởng trực tiếp từ góc kim dừng thực tế
+  const arc = (Math.PI * 2) / list.length;
+  const pointerAngle = ((Math.PI / 2 - state.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+  const winningIndex = Math.floor(pointerAngle / arc) % list.length;
+  const w = list[winningIndex];
+  if(!w) return;
+
+  lastSelectedStudent = w;
+  window.currentWinnerObj = w;
+
+  state.results.unshift({ name: w.name, id: w.id, time: Date.now() });
+  if(state.results.length > 200) state.results.length = 200;
+
+  saveLocal();
+  renderResults();
+  playWinSound();
+  confetti();
+
   if(state.animateWinner){
-    $("centerLabel").animate([{transform:"translate(-50%,-50%) scale(1)"},{transform:"translate(-50%,-50%) scale(1.13)"},{transform:"translate(-50%,-50%) scale(1)"}],{duration:650});
+    $("centerLabel").animate([
+      { transform: "translate(-50%,-50%) scale(1)" },
+      { transform: "translate(-50%,-50%) scale(1.15)" },
+      { transform: "translate(-50%,-50%) scale(1)" }
+    ], { duration: 650 });
   }
-  if(state.popup){$("winnerName").textContent=w.name;$("winnerMessage").textContent=w.message||state.message;$("winnerOverlay").style.display="flex"}
-  if(state.autoRemove)setTimeout(()=>{removeCurrentWinner(true)},5000);
-  currentWinner=null;
+
+  if(state.popup){
+    $("winnerName").textContent = w.name;
+    $("winnerMessage").textContent = w.message || state.message;
+    $("winnerOverlay").setAttribute("data-winner-id", String(w.id));
+    $("winnerOverlay").style.display = "flex";
+  }
+
+  clearTimeout(autoRemoveTimer);
+  if(state.autoRemove){
+    autoRemoveTimer = setTimeout(() => {
+      removeCurrentWinner(true);
+    }, 5000);
+  }
 }
-function removeCurrentWinner(silent=false){
-  const r=state.results[0]; if(!r)return;
-  const e=state.entries.find(x=>x.id===r.id);if(e)e.enabled=false;
-  saveLocal();updateUI();if(!silent)$("winnerOverlay").style.display="none";
-  if(silent)toast("Đã tự động loại "+r.name+" khỏi vòng quay");
+
+// Xử lý nút Loại khỏi vòng quay
+function removeCurrentWinner(silent = false){
+  clearTimeout(autoRemoveTimer);
+  
+  const overlay = $("winnerOverlay");
+  if(overlay) overlay.style.display = "none";
+
+  let target = window.currentWinnerObj || lastSelectedStudent;
+  if(!target && overlay){
+    const wid = overlay.getAttribute("data-winner-id");
+    if(wid) target = state.entries.find(e => String(e.id) === String(wid));
+  }
+  if(!target && state.results.length > 0){
+    target = state.entries.find(e => e.name === state.results[0].name || e.id === state.results[0].id);
+  }
+
+  if(target){
+    const found = state.entries.find(e => e.id === target.id || e.name === target.name);
+    if(found){
+      found.enabled = false;
+      toast(`Đã xóa ${found.name} khỏi vòng quay`);
+    }
+  }
+
+  window.currentWinnerObj = null;
+  lastSelectedStudent = null;
+
+  saveLocal();
+  updateUI();
 }
-function sortResults(){state.results.sort((a,b)=>a.name.localeCompare(b.name,"vi"));saveLocal();renderResults()}
+
+function closeWinnerPopup(){
+  clearTimeout(autoRemoveTimer);
+  const overlay = $("winnerOverlay");
+  if(overlay) overlay.style.display = "none";
+}
+
 function exportResults(){
-  const text=state.results.map((r,i)=>`${i+1}. ${r.name} — ${new Date(r.time).toLocaleString("vi-VN")}`).join("\\n");
-  download("ket-qua-vong-quay-11A3.txt",text,"text/plain;charset=utf-8");
+  if(!state.results.length){ toast("Chưa có kết quả để xuất"); return; }
+  const text = state.results.map((r, i) => `${i + 1}. ${r.name} — ${new Date(r.time).toLocaleString("vi-VN")}`).join("\n");
+  download("ket-qua-vong-quay-11A3.txt", text, "text/plain;charset=utf-8");
 }
-function exportState(){download("vong-quay-11A3.json",JSON.stringify(state,null,2),"application/json;charset=utf-8")}
-function download(name,text,type){const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([text],{type}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+
+function exportState(){ download("vong-quay-11A3.json", JSON.stringify(state, null, 2), "application/json;charset=utf-8"); }
+
+function download(name, text, type){
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], {type}));
+  a.download = name; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+
 function importState(file){
-  const r=new FileReader();r.onload=()=>{try{const s=JSON.parse(r.result);state={...state,...s};saveLocal();updateUI();toast("Đã nhập vòng quay")}catch(e){toast("File JSON không hợp lệ")}};r.readAsText(file)
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const s = JSON.parse(r.result);
+      state = {...state, ...s};
+      saveLocal(); updateUI(); toast("Đã nhập dữ liệu vòng quay thành công");
+    } catch(e){ toast("Tệp JSON không hợp lệ"); }
+  };
+  r.readAsText(file);
 }
+
 function share(){
-  const data=btoa(unescape(encodeURIComponent(JSON.stringify({...state,results:[]}))));
-  const url=location.href.split("#")[0]+"#data="+data;
-  navigator.clipboard?.writeText(url).then(()=>toast("Đã copy link chia sẻ")).catch(()=>prompt("Copy link này:",url));
+  const data = btoa(unescape(encodeURIComponent(JSON.stringify({...state, results: []}))));
+  const url = location.href.split("#")[0] + "#data=" + data;
+  navigator.clipboard?.writeText(url)
+    .then(() => toast("Đã sao chép liên kết chia sẻ vào khay nhớ tạm"))
+    .catch(() => prompt("Sao chép liên kết này:", url));
 }
+
 function loadHash(){
-  if(!location.hash.startsWith("#data="))return;
-  try{const s=JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(6)))));state={...state,...s};saveLocal();toast("Đã mở vòng quay từ link chia sẻ")}catch(e){}
+  if(!location.hash.startsWith("#data=")) return;
+  try {
+    const s = JSON.parse(decodeURIComponent(escape(atob(location.hash.slice(6)))));
+    state = {...state, ...s};
+    saveLocal(); toast("Đã mở vòng quay từ liên kết chia sẻ");
+  } catch(e) {}
 }
 
-$("wheel").addEventListener("click",spin);
-$("centerLabel").addEventListener("click",spin);
-document.addEventListener("keydown",e=>{if((e.code==="Space"||e.code==="Enter") && !["INPUT","TEXTAREA","SELECT"].includes(document.activeElement.tagName)){e.preventDefault();spin()}});
-document.querySelectorAll(".filter").forEach(b=>b.onclick=()=>{if(state.spinning)return;state.filter=b.dataset.filter;saveLocal();updateUI()});
-document.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));b.classList.add("active");renderPanel()});
-$("sortResultsBtn").onclick=sortResults;
-$("clearResultsBtn").onclick=()=>{if(confirm("Xóa toàn bộ lịch sử kết quả?")){state.results=[];saveLocal();renderResults()}};
-$("exportResultsBtn").onclick=exportResults;
-$("saveBtn").onclick=()=>{saveLocal();toast("Đã lưu vòng quay trên thiết bị")};
-$("openBtn").onclick=()=>{loadLocal();updateUI();toast("Đã mở bản lưu gần nhất")};
-$("exportBtn").onclick=exportState;
-$("importBtn").onclick=()=>$("fileImport").click();
-$("fileImport").onchange=e=>{if(e.target.files[0])importState(e.target.files[0]);e.target.value=""};
-$("shareBtn").onclick=share;
-$("newBtn").onclick=()=>{if(confirm("Tạo lại vòng quay 34 học sinh và xóa lịch sử?")){state={...state,entries:CLASS.map(x=>({...x,enabled:true,weight:1,color:null,image:null,message:"We have a winner!"})),results:[],filter:"all",rotation:0};saveLocal();updateUI()}};
-$("closeWinnerBtn").onclick=()=>$("winnerOverlay").style.display="none";
-$("removeWinnerBtn").onclick=()=>removeCurrentWinner(false);
-$("themeBtn").onclick=()=>{document.body.classList.toggle("dark");localStorage.setItem("wheel11a3dark",document.body.classList.contains("dark")?"1":"0")};
-$("fullBtn").onclick=()=>{if(!document.fullscreenElement)document.documentElement.requestFullscreen?.();else document.exitFullscreen?.()};
-window.addEventListener("resize",drawWheel);
+// Bắt sự kiện bàn phím và chuột
+$("wheel").addEventListener("click", spin);
+$("centerLabel").addEventListener("click", spin);
 
-loadLocal();loadHash();
-if(localStorage.getItem("wheel11a3dark")==="1")document.body.classList.add("dark");
-updateUI();
+document.addEventListener("keydown", e => {
+  if((e.code === "Space" || e.code === "Enter") && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)){
+    e.preventDefault();
+    spin();
+  }
+});
+
+document.querySelectorAll(".tab").forEach(b => {
+  b.onclick = () => {
+    document.querySelectorAll(".tab").forEach(x => x.classList.remove("active"));
+    b.classList.add("active");
+    renderPanel();
+  };
+});
+
+if($("clearResultsBtn")){
+  $("clearResultsBtn").onclick = () => {
+    if(confirm("Bạn có chắc chắn muốn xóa toàn bộ lịch sử kết quả?")){
+      state.results = []; saveLocal(); renderResults(); toast("Đã xóa lịch sử");
+    }
+  };
+}
+if($("exportResultsBtn")) $("exportResultsBtn").onclick = exportResults;
+$("saveBtn").onclick = () => { saveLocal(); toast("Đã lưu vòng quay trên thiết bị"); };
+$("openBtn").onclick = () => { loadLocal(); updateUI(); toast("Đã tải bản lưu gần nhất"); };
+$("exportBtn").onclick = exportState;
+$("importBtn").onclick = () => $("fileImport").click();
+$("fileImport").onchange = e => { if(e.target.files[0]) importState(e.target.files[0]); e.target.value = ""; };
+$("shareBtn").onclick = share;
+$("newBtn").onclick = () => {
+  if(confirm("Tạo lại vòng quay đầy đủ 34 học sinh ban đầu và xóa lịch sử?")){
+    state = {
+      ...state,
+      entries: CLASS.map(x => ({...x})),
+      results: [], filter: "all", rotation: 0
+    };
+    saveLocal(); updateUI(); toast("Đã khởi tạo lại vòng quay đủ 34 học sinh");
+  }
+};
+
+$("themeBtn").onclick = () => {
+  document.body.classList.toggle("dark");
+  localStorage.setItem("wheel11a3dark", document.body.classList.contains("dark") ? "1" : "0");
+};
+
+$("fullBtn").onclick = () => {
+  if(!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+  else document.exitFullscreen?.();
+};
+
+window.addEventListener("resize", () => { drawWheel(); });
+
+// Khởi chạy ban đầu
+loadLocal();
+loadHash();
+if(localStorage.getItem("wheel11a3dark") === "1") document.body.classList.add("dark");
+requestAnimationFrame(() => { updateUI(); });
 </script>
 </body>
 </html>
