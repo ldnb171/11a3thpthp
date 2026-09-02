@@ -122,8 +122,19 @@
     .entry-dot { width: 18px; height: 18px; border-radius: 50%; border: 1px solid rgba(0, 0, 0, .1); }
     .entry-name { font-size: 13px; font-weight: 750; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .entry-meta { font-size: 11px; color: #98a2b3; margin-top: 1px; }
-    .entry-tools { display: flex; gap: 3px; }
-    .entry-tools button { width: 28px; height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 7px; font-weight: bold; }
+    .entry-tools { display: flex; align-items: center; gap: 4px; }
+    .entry-tools button {
+      height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 7px;
+      font-weight: bold; display: inline-flex; align-items: center; justify-content: center;
+      padding: 0 6px; color: var(--text);
+    }
+    .btn-toggle-status {
+      font-size: 11px; font-weight: 800; min-width: 38px;
+    }
+    .btn-toggle-status.is-on { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
+    .btn-toggle-status.is-off { color: #64748b; border-color: #e2e8f0; background: #f8fafc; }
+    .btn-palette-icon svg { width: 15px; height: 15px; fill: currentColor; }
+    
     .results { margin-top: 16px; padding: 14px; }
     .results-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .results h3 { margin: 0; font-size: 15px; font-weight: 800; }
@@ -156,6 +167,9 @@
     
     .dark { --bg1: #0b1020; --bg2: #111827; --panel: rgba(17, 24, 39, .93); --text: #f3f4f6; --muted: #98a2b3; --line: #374151; }
     .dark .btn, .dark .entry, .dark .row input[type="number"], .dark .row select, .dark .text, .dark .theme, .dark .result-chip, .dark .color-grid input, .dark .tabs, .dark .center-label, .dark .modal { background: #111827; color: #e5e7eb; border-color: #374151; }
+    .dark .entry-tools button { background: #1f2937; color: #e5e7eb; border-color: #374151; }
+    .dark .btn-toggle-status.is-on { background: #064e3b; color: #6ee7b7; border-color: #047857; }
+    .dark .btn-toggle-status.is-off { background: #1e293b; color: #94a3b8; border-color: #334155; }
     .dark .result-chip small { color: #9ca3af; }
     .dark .tab.active { background: #1f2937; color: #fff; }
     .dark .note { background: #111827; }
@@ -250,8 +264,6 @@
 
 <div class="confetti" id="confetti"></div>
 <div class="toast" id="toast"></div>
-<input type="file" id="bgInput" accept="image/*" hidden>
-<input type="file" id="centerInput" accept="image/*" hidden>
 
 <script>
 // Danh sách đầy đủ 34 học sinh lớp 11A3 (20 Nam, 14 Nữ)
@@ -290,7 +302,7 @@ const CLASS = [
   {name:"Nguyễn Minh Tuyết", gender:"F"},
   {name:"Nguyễn Thị Tường Vy", gender:"F"},
   {name:"Nguyễn Thị Như Ý", gender:"F"}
-].map((x, i) => ({...x, id: i + 1, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
+].map((x, i) => ({...x, id: i + 1, enabled: true, weight: 1, color: null, message: "Đã chọn được học sinh may mắn!"}));
 
 const themes = {
   Classic:["#ef4444","#f59e0b","#10b981","#3b82f6","#8b5cf6","#ec4899"],
@@ -301,7 +313,7 @@ const themes = {
   Sunset:["#7c2d12","#ea580c","#f97316","#f43f5e","#db2777","#9333ea"]
 };
 
-const STORAGE_KEY = "wheel11a3_v12";
+const STORAGE_KEY = "wheel11a3_v13";
 
 let state = {
   entries: CLASS.map(x => ({...x})),
@@ -309,7 +321,6 @@ let state = {
   rotation: 0,
   spinning: false,
   results: [],
-  equalChance: true,
   duration: 10,
   spinVolume: .45,
   winVolume: .7,
@@ -326,8 +337,6 @@ let state = {
   pointerColor: true,
   theme: "Classic",
   colors: [...themes.Classic],
-  bg: null,
-  centerImage: null,
   centerSize: "M",
   centerText: "NHẤP ĐỂ\nQUAY",
   message: "Đã chọn được học sinh may mắn!"
@@ -530,14 +539,9 @@ function updateUI(reBake = true){
     $("centerLabel").style.height = labelSize + "px";
   }
 
-  const img = $("centerImg"), span = document.querySelector("#centerLabel span");
-  if(img && span){
-    if(state.centerImage){
-      img.src = state.centerImage; img.style.display = "block"; span.style.display = "none";
-    } else {
-      img.style.display = "none"; span.style.display = "block";
-      span.innerHTML = state.centerText.replace(/\n/g, "<br>");
-    }
+  const span = document.querySelector("#centerLabel span");
+  if(span){
+    span.innerHTML = state.centerText.replace(/\n/g, "<br>");
   }
 
   try { renderResults(); } catch(e){}
@@ -577,7 +581,7 @@ function renderStandard(){
   $("panelScroll").innerHTML = `
   <div class="section">
     <div class="section-title">Danh sách lớp</div>
-    <div class="note">Danh sách gồm 34 học sinh lớp 11A3 (20 Nam, 14 Nữ).</div>
+    <div class="note">Danh sách gồm 34 học sinh lớp 11A3 (20 Nam, 14 Nữ). Xác suất mặc định được chia đều cho tất cả học sinh đang bật.</div>
   </div>
   <div class="section">
     <div class="section-title">Điều khiển danh sách</div>
@@ -587,44 +591,35 @@ function renderStandard(){
     </div>
   </div>
   <div class="section">
-    <div class="section-title">Xác suất trúng</div>
-    <label class="check"><input id="equalChance" type="checkbox" ${state.equalChance ? "checked" : ""}> Chia đều cơ hội cho các học sinh đang chọn</label>
-    <div class="note">Mặc định: xác suất chia đều như nhau. Chọn <b>Cả lớp / Nam / Nữ</b> ngay dưới vòng quay.</div>
-  </div>
-  <div class="section">
-    <div class="section-title">Hình ảnh</div>
-    <div class="entry-actions">
-      <button class="btn" onclick="chooseBg()">Thêm ảnh nền vòng</button>
-      <button class="btn" onclick="chooseCenter()">Thêm ảnh tâm</button>
-      <button class="btn" onclick="clearImages()">Xóa ảnh</button>
-    </div>
-  </div>
-  <div class="section">
     <div class="section-title">Thông tin số lượng</div>
     <div class="note"><b>Nam:</b> ${state.entries.filter(e => e.gender === "M" && e.enabled).length}/20 &nbsp;•&nbsp; <b>Nữ:</b> ${state.entries.filter(e => e.gender === "F" && e.enabled).length}/14 &nbsp;•&nbsp; <b>Đang bật:</b> ${state.entries.filter(e => e.enabled).length}/34</div>
   </div>`;
-  const eq = $("equalChance");
-  if(eq) eq.onchange = e => { state.equalChance = e.target.checked; saveLocal(); toast("Đã cập nhật chế độ xác suất"); };
 }
 
 function renderAdvanced(){
+  // Icon palette đơn sắc (trắng đen SVG)
+  const paletteSvg = `<svg viewBox="0 0 24 24"><path d="M12 2C6.49 2 2 6.49 2 12c0 5.51 4.49 10 10 10a2.5 2.5 0 0 0 2.5-2.5c0-.61-.23-1.2-.64-1.67-.08-.1-.13-.23-.13-.33 0-.28.22-.5.5-.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
+
   $("panelScroll").innerHTML = `
   <div class="section">
     <div class="section-title">Danh sách từng học sinh</div>
-    <div class="note" style="margin-bottom:9px">Bật/tắt ô, đổi màu hoặc di chuyển vị trí. Khi bật “Chia đều cơ hội”, trọng số cá nhân sẽ được bỏ qua.</div>
+    <div class="note" style="margin-bottom:9px">Bật/tắt ô (ON/OFF), đổi màu hoặc di chuyển vị trí học sinh trong danh sách.</div>
     <div class="entries-list">${state.entries.map((e, i) => `
       <div class="entry ${e.enabled ? "" : "off"}">
         <div class="entry-dot" style="background:${e.color || state.colors[i % state.colors.length]}"></div>
         <div>
           <div class="entry-name">${escapeHtml(e.name)}</div>
-          <div class="entry-meta">${e.gender === "M" ? "Nam" : "Nữ"} • Trọng số: ${e.weight}</div>
+          <div class="entry-meta">${e.gender === "M" ? "Nam" : "Nữ"}</div>
         </div>
         <div class="entry-tools">
-          <button title="Bật/Tắt" onclick="toggleEntry(${i})">${e.enabled ? "◉" : "○"}</button>
+          <button class="btn-toggle-status ${e.enabled ? "is-on" : "is-off"}" title="Bật/Tắt học sinh này" onclick="toggleEntry(${i})">
+            ${e.enabled ? "ON" : "OFF"}
+          </button>
           <button title="Chuyển lên" onclick="moveEntry(${i}, -1)">↑</button>
           <button title="Chuyển xuống" onclick="moveEntry(${i}, 1)">↓</button>
-          <button title="Chọn màu" onclick="pickEntryColor(${i})">●</button>
-          <button title="Thêm ảnh" onclick="pickEntryImage(${i})">▧</button>
+          <button class="btn-palette-icon" title="Đổi màu ô" onclick="pickEntryColor(${i})">
+            ${paletteSvg}
+          </button>
         </div>
       </div>`).join("")}</div>
   </div>
@@ -664,10 +659,8 @@ function renderOptions(){
     <label class="check"><input id="shadow" type="checkbox" ${state.shadow ? "checked" : ""}> Đổ bóng vòng quay</label>
     <label class="check"><input id="contours" type="checkbox" ${state.contours ? "checked" : ""}> Đường viền ngăn ô</label>
     <label class="check"><input id="pointerColor" type="checkbox" ${state.pointerColor ? "checked" : ""}> Kim đổi màu theo ô trúng</label>
-    <div class="section-title" style="margin-top:14px">Ảnh tâm vòng quay</div>
+    <div class="section-title" style="margin-top:14px">Kích thước tâm vòng quay</div>
     <div class="entry-actions">
-      <button class="btn" onclick="chooseCenter()">Tải ảnh lên</button>
-      <button class="btn" onclick="clearCenter()">Xóa ảnh</button>
       ${["S", "M", "L", "XL"].map(s => `<button class="btn ${state.centerSize === s ? "primary" : ""}" onclick="setCenterSize('${s}')">${s}</button>`).join("")}
     </div>
   </div>
@@ -736,7 +729,7 @@ function shuffleEntries(){
 }
 
 function restoreEntries(){
-  state.entries = CLASS.map(x => ({...x, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
+  state.entries = CLASS.map(x => ({...x, enabled: true, weight: 1, color: null, message: "Đã chọn được học sinh may mắn!"}));
   saveLocal(); updateUI(); toast("Đã khôi phục đủ 34 học sinh ban đầu");
 }
 
@@ -757,37 +750,11 @@ function pickEntryColor(i){
   if(c && /^#[0-9a-f]{6}$/i.test(c)){ state.entries[i].color = c; saveLocal(); updateUI(); }
 }
 
-function pickEntryImage(i){
-  const input = document.createElement("input"); input.type = "file"; input.accept = "image/*";
-  input.onchange = () => {
-    const f = input.files[0]; if(!f) return;
-    const r = new FileReader();
-    r.onload = () => { state.entries[i].image = r.result; saveLocal(); toast("Đã thêm ảnh cho " + state.entries[i].name); };
-    r.readAsDataURL(f);
-  };
-  input.click();
-}
-
 function applyTheme(t){
   state.theme = t; state.colors = [...themes[t]]; saveLocal(); updateUI(); toast("Đã chọn chủ đề " + t);
 }
 
 function setColor(i, c){ state.colors[i] = c; saveLocal(); updateUI(); }
-function chooseBg(){ $("bgInput").click(); }
-function chooseCenter(){ $("centerInput").click(); }
-
-$("bgInput").onchange = e => {
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader(); r.onload = () => { state.bg = r.result; saveLocal(); updateUI(); }; r.readAsDataURL(f);
-};
-
-$("centerInput").onchange = e => {
-  const f = e.target.files[0]; if(!f) return;
-  const r = new FileReader(); r.onload = () => { state.centerImage = r.result; saveLocal(); updateUI(); }; r.readAsDataURL(f);
-};
-
-function clearImages(){ state.bg = null; state.centerImage = null; saveLocal(); updateUI(); toast("Đã xóa ảnh"); }
-function clearCenter(){ state.centerImage = null; saveLocal(); updateUI(); }
 function setCenterSize(s){ state.centerSize = s; saveLocal(); updateUI(); }
 function setPageGradient(){
   document.body.style.background = "radial-gradient(circle at 15% 15%,rgba(99,91,255,.24),transparent 30%),radial-gradient(circle at 85% 80%,rgba(14,165,233,.18),transparent 28%),linear-gradient(135deg,#e0e7ff,#f0fdfa)";
@@ -989,7 +956,6 @@ function closeWinnerPopup(){
   if(overlay) overlay.style.display = "none";
 }
 
-// Xuất kết quả với tên file bao gồm Ngày và Giờ xuất không trùng lặp
 function exportResults(){
   if(!state.results.length){ toast("Chưa có kết quả để xuất"); return; }
   
@@ -1062,7 +1028,7 @@ function loadHash(){
     const loaded = decodeUrlToState(b64);
     if(loaded && loaded.entries && loaded.entries.length){
       state = {...state, ...loaded};
-      saveLocal(); // Tự động lưu ngay vào localStorage thiết bị mới
+      saveLocal();
       try {
         history.replaceState(null, "", window.location.pathname);
       } catch(e){}
