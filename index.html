@@ -70,8 +70,8 @@
     .pointer {
       position: absolute; right: -1px; top: 50%; transform: translateY(-50%) rotate(0deg);
       width: 0; height: 0; border-top: 20px solid transparent; border-bottom: 20px solid transparent;
-      border-right: 38px solid #111827; filter: drop-shadow(0 3px 4px rgba(0, 0, 0, .2)); z-index: 5;
-      transition: transform .04s ease-out, border-right-color .2s; transform-origin: 34px 50%;
+      border-right: 38px solid #111827; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, .35)); z-index: 5;
+      transition: transform .04s ease-out, border-right-color .15s; transform-origin: 34px 50%;
     }
     .pointer::after { content: ""; position: absolute; right: -34px; top: -7px; width: 8px; height: 14px; background: #fff; border-radius: 4px; }
     .center-label {
@@ -123,18 +123,14 @@
     .entry-name { font-size: 13px; font-weight: 750; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .entry-meta { font-size: 11px; color: #98a2b3; margin-top: 1px; }
     .entry-tools { display: flex; align-items: center; gap: 4px; }
-    .entry-tools button {
-      height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 7px;
-      font-weight: bold; display: inline-flex; align-items: center; justify-content: center;
-      padding: 0 6px; color: var(--text);
-    }
-    .btn-toggle-status {
-      font-size: 11px; font-weight: 800; min-width: 38px;
-    }
-    .btn-toggle-status.is-on { color: #16a34a; border-color: #bbf7d0; background: #f0fdf4; }
-    .btn-toggle-status.is-off { color: #64748b; border-color: #e2e8f0; background: #f8fafc; }
-    .btn-palette-icon svg { width: 15px; height: 15px; fill: currentColor; }
+    .entry-tools button { width: 30px; height: 28px; border: 1px solid var(--line); background: #fff; border-radius: 7px; font-weight: bold; }
     
+    .entry-tools button.btn-toggle {
+      width: auto; min-width: 42px; padding: 0 6px; font-size: 11px; font-weight: 900; transition: .15s;
+    }
+    .entry-tools button.btn-toggle.on { background: #10b981; color: #fff; border-color: #059669; }
+    .entry-tools button.btn-toggle.off { background: #ef4444; color: #fff; border-color: #dc2626; }
+
     .results { margin-top: 16px; padding: 14px; }
     .results-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .results h3 { margin: 0; font-size: 15px; font-weight: 800; }
@@ -167,13 +163,9 @@
     
     .dark { --bg1: #0b1020; --bg2: #111827; --panel: rgba(17, 24, 39, .93); --text: #f3f4f6; --muted: #98a2b3; --line: #374151; }
     .dark .btn, .dark .entry, .dark .row input[type="number"], .dark .row select, .dark .text, .dark .theme, .dark .result-chip, .dark .color-grid input, .dark .tabs, .dark .center-label, .dark .modal { background: #111827; color: #e5e7eb; border-color: #374151; }
-    .dark .entry-tools button { background: #1f2937; color: #e5e7eb; border-color: #374151; }
-    .dark .btn-toggle-status.is-on { background: #064e3b; color: #6ee7b7; border-color: #047857; }
-    .dark .btn-toggle-status.is-off { background: #1e293b; color: #94a3b8; border-color: #334155; }
     .dark .result-chip small { color: #9ca3af; }
     .dark .tab.active { background: #1f2937; color: #fff; }
     .dark .note { background: #111827; }
-    .dark .pointer { border-right-color: #f9fafb; }
     .dark .filter { background: #1f2937; color: #9ca3af; border-color: #374151; }
     .dark .filter.active { background: #635bff !important; color: #fff !important; border-color: #635bff !important; box-shadow: 0 4px 14px rgba(99, 91, 255, .4); }
 
@@ -266,7 +258,6 @@
 <div class="toast" id="toast"></div>
 
 <script>
-// Danh sách đầy đủ 34 học sinh lớp 11A3 (20 Nam, 14 Nữ)
 const CLASS = [
   {name:"Bùi Tuyết Anh", gender:"F"},
   {name:"Đỗ Phan Hoài Anh", gender:"M"},
@@ -296,13 +287,13 @@ const CLASS = [
   {name:"Võ Ngọc Thịnh", gender:"M"},
   {name:"Phạm Đào Kim Thư", gender:"F"},
   {name:"Nguyễn Ngọc Bích Trâm", gender:"F"},
-  {name:"Nguyễn Phuợng Trinh", gender:"F"},
+  {name:"Nguyễn Phương Trinh", gender:"F"},
   {name:"Đặng Lê Ngọc Trọng", gender:"M"},
   {name:"Nguyễn Thị Mộng Tuyền", gender:"F"},
   {name:"Nguyễn Minh Tuyết", gender:"F"},
   {name:"Nguyễn Thị Tường Vy", gender:"F"},
   {name:"Nguyễn Thị Như Ý", gender:"F"}
-].map((x, i) => ({...x, id: i + 1, enabled: true, weight: 1, color: null, message: "Đã chọn được học sinh may mắn!"}));
+].map((x, i) => ({...x, id: i + 1, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
 
 const themes = {
   Classic:["#ef4444","#f59e0b","#10b981","#3b82f6","#8b5cf6","#ec4899"],
@@ -313,7 +304,7 @@ const themes = {
   Sunset:["#7c2d12","#ea580c","#f97316","#f43f5e","#db2777","#9333ea"]
 };
 
-const STORAGE_KEY = "wheel11a3_v13";
+const STORAGE_KEY = "wheel11a3_v15";
 
 let state = {
   entries: CLASS.map(x => ({...x})),
@@ -321,6 +312,7 @@ let state = {
   rotation: 0,
   spinning: false,
   results: [],
+  equalChance: true,
   duration: 10,
   spinVolume: .45,
   winVolume: .7,
@@ -331,12 +323,14 @@ let state = {
   animateWinner: true,
   confetti: true,
   popup: true,
-  autoRemove: false,
+  autoRemove: false, // Mặc định không bật
   shadow: true,
   contours: true,
   pointerColor: true,
   theme: "Classic",
   colors: [...themes.Classic],
+  bg: null,
+  centerImage: null,
   centerSize: "M",
   centerText: "NHẤP ĐỂ\nQUAY",
   message: "Đã chọn được học sinh may mắn!"
@@ -344,15 +338,14 @@ let state = {
 
 let lastSelectedStudent = null;
 let autoRemoveTimer = null;
+let popupShowTimer = null;
+let popupCloseTimer = null;
 let audioCtx = null;
 let lastPegIndex = -1;
 
 const $ = id => document.getElementById(id);
 const wheel = $("wheel"), ctx = wheel.getContext("2d");
 
-// ========================================================
-// OFFSCREEN BUFFER PRE-RENDERING (DỰNG HÌNH ĐỆM ĐẠT 60-120 FPS)
-// ========================================================
 const bufferCanvas = document.createElement("canvas");
 const bufferCtx = bufferCanvas.getContext("2d");
 let cachedDimension = 0;
@@ -375,7 +368,7 @@ function pct(){
 
 function toast(msg){
   const t = $("toast"); t.textContent = msg; t.classList.add("show");
-  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2400);
+  clearTimeout(toast.timer); toast.timer = setTimeout(() => t.classList.remove("show"), 2500);
 }
 
 function saveLocal(){
@@ -413,7 +406,6 @@ function syncCanvasSize(){
   }
 }
 
-// Dựng sẵn nan quạt + chữ lên buffer đúng 1 lần
 function bakeWheel(){
   syncCanvasSize();
   const dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -498,6 +490,22 @@ function drawWheel(){
   ctx.rotate(state.rotation);
   ctx.drawImage(bufferCanvas, -W / 2, -H / 2);
   ctx.restore();
+  updatePointerColor();
+}
+
+function updatePointerColor(){
+  if(!state.pointerColor) return;
+  const list = cloneEntries();
+  if(!list.length) return;
+  const arc = (Math.PI * 2) / list.length;
+  const targetAngle = ((Math.PI / 2 - state.rotation) % (Math.PI * 2) + Math.PI * 2) % (Math.PI * 2);
+  const activeIdx = Math.floor(targetAngle / arc) % list.length;
+  const currentSlice = list[activeIdx];
+  if(currentSlice){
+    const color = currentSlice.color || state.colors[activeIdx % state.colors.length];
+    const pointer = $("wheelPointer");
+    if(pointer) pointer.style.borderRightColor = color;
+  }
 }
 
 function setFilter(filterType){
@@ -539,9 +547,14 @@ function updateUI(reBake = true){
     $("centerLabel").style.height = labelSize + "px";
   }
 
-  const span = document.querySelector("#centerLabel span");
-  if(span){
-    span.innerHTML = state.centerText.replace(/\n/g, "<br>");
+  const img = $("centerImg"), span = document.querySelector("#centerLabel span");
+  if(img && span){
+    if(state.centerImage){
+      img.src = state.centerImage; img.style.display = "block"; span.style.display = "none";
+    } else {
+      img.style.display = "none"; span.style.display = "block";
+      span.innerHTML = state.centerText.replace(/\n/g, "<br>");
+    }
   }
 
   try { renderResults(); } catch(e){}
@@ -581,7 +594,7 @@ function renderStandard(){
   $("panelScroll").innerHTML = `
   <div class="section">
     <div class="section-title">Danh sách lớp</div>
-    <div class="note">Danh sách gồm 34 học sinh lớp 11A3 (20 Nam, 14 Nữ). Xác suất mặc định được chia đều cho tất cả học sinh đang bật.</div>
+    <div class="note">Danh sách gồm 34 học sinh lớp 11A3 (20 Nam, 14 Nữ).</div>
   </div>
   <div class="section">
     <div class="section-title">Điều khiển danh sách</div>
@@ -597,29 +610,22 @@ function renderStandard(){
 }
 
 function renderAdvanced(){
-  // Icon palette đơn sắc (trắng đen SVG)
-  const paletteSvg = `<svg viewBox="0 0 24 24"><path d="M12 2C6.49 2 2 6.49 2 12c0 5.51 4.49 10 10 10a2.5 2.5 0 0 0 2.5-2.5c0-.61-.23-1.2-.64-1.67-.08-.1-.13-.23-.13-.33 0-.28.22-.5.5-.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9zm-5.5 9a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3-4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm5 0a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3zm3 4a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3z"/></svg>`;
-
   $("panelScroll").innerHTML = `
   <div class="section">
     <div class="section-title">Danh sách từng học sinh</div>
-    <div class="note" style="margin-bottom:9px">Bật/tắt ô (ON/OFF), đổi màu hoặc di chuyển vị trí học sinh trong danh sách.</div>
+    <div class="note" style="margin-bottom:9px">Bật/tắt trạng thái (ON/OFF), đổi màu (🎨) hoặc di chuyển vị trí học sinh.</div>
     <div class="entries-list">${state.entries.map((e, i) => `
       <div class="entry ${e.enabled ? "" : "off"}">
         <div class="entry-dot" style="background:${e.color || state.colors[i % state.colors.length]}"></div>
         <div>
           <div class="entry-name">${escapeHtml(e.name)}</div>
-          <div class="entry-meta">${e.gender === "M" ? "Nam" : "Nữ"}</div>
+          <div class="entry-meta">${e.gender === "M" ? "Nam" : "Nữ"} • Trọng số: ${e.weight}</div>
         </div>
         <div class="entry-tools">
-          <button class="btn-toggle-status ${e.enabled ? "is-on" : "is-off"}" title="Bật/Tắt học sinh này" onclick="toggleEntry(${i})">
-            ${e.enabled ? "ON" : "OFF"}
-          </button>
+          <button class="btn-toggle ${e.enabled ? "on" : "off"}" title="Bật/Tắt học sinh" onclick="toggleEntry(${i})">${e.enabled ? "ON" : "OFF"}</button>
           <button title="Chuyển lên" onclick="moveEntry(${i}, -1)">↑</button>
           <button title="Chuyển xuống" onclick="moveEntry(${i}, 1)">↓</button>
-          <button class="btn-palette-icon" title="Đổi màu ô" onclick="pickEntryColor(${i})">
-            ${paletteSvg}
-          </button>
+          <button title="Chọn màu nan quạt" onclick="pickEntryColor(${i})">🎨</button>
         </div>
       </div>`).join("")}</div>
   </div>
@@ -648,7 +654,7 @@ function renderOptions(){
     <label class="check"><input id="animateWinner" type="checkbox" ${state.animateWinner ? "checked" : ""}> Hiệu ứng động cho ô trúng</label>
     <label class="check"><input id="confettiOn" type="checkbox" ${state.confetti ? "checked" : ""}> Bắn pháo hoa giấy</label>
     <label class="check"><input id="popup" type="checkbox" ${state.popup ? "checked" : ""}> Hiển thị popup kết quả</label>
-    <label class="check"><input id="autoRemove" type="checkbox" ${state.autoRemove ? "checked" : ""}> Tự động loại học sinh sau 5 giây</label>
+    <label class="check"><input id="autoRemove" type="checkbox" ${state.autoRemove ? "checked" : ""}> Tự động xóa tên sau khi quay</label>
   </div>
   <div class="section">
     <div class="section-title">Giao diện & Màu sắc</div>
@@ -659,10 +665,6 @@ function renderOptions(){
     <label class="check"><input id="shadow" type="checkbox" ${state.shadow ? "checked" : ""}> Đổ bóng vòng quay</label>
     <label class="check"><input id="contours" type="checkbox" ${state.contours ? "checked" : ""}> Đường viền ngăn ô</label>
     <label class="check"><input id="pointerColor" type="checkbox" ${state.pointerColor ? "checked" : ""}> Kim đổi màu theo ô trúng</label>
-    <div class="section-title" style="margin-top:14px">Kích thước tâm vòng quay</div>
-    <div class="entry-actions">
-      ${["S", "M", "L", "XL"].map(s => `<button class="btn ${state.centerSize === s ? "primary" : ""}" onclick="setCenterSize('${s}')">${s}</button>`).join("")}
-    </div>
   </div>
   <div class="section">
     <div class="section-title">Hình nền trang</div>
@@ -702,7 +704,7 @@ function bindOptions(){
     ["autoRemove", v => state.autoRemove = v],
     ["shadow", v => { state.shadow = v; updateUI(); }],
     ["contours", v => { state.contours = v; updateUI(); }],
-    ["pointerColor", v => state.pointerColor = v]
+    ["pointerColor", v => { state.pointerColor = v; updatePointerColor(); }]
   ];
 
   simpleChecks.forEach(([id, fn]) => {
@@ -729,7 +731,7 @@ function shuffleEntries(){
 }
 
 function restoreEntries(){
-  state.entries = CLASS.map(x => ({...x, enabled: true, weight: 1, color: null, message: "Đã chọn được học sinh may mắn!"}));
+  state.entries = CLASS.map(x => ({...x, enabled: true, weight: 1, color: null, image: null, message: "Đã chọn được học sinh may mắn!"}));
   saveLocal(); updateUI(); toast("Đã khôi phục đủ 34 học sinh ban đầu");
 }
 
@@ -755,7 +757,6 @@ function applyTheme(t){
 }
 
 function setColor(i, c){ state.colors[i] = c; saveLocal(); updateUI(); }
-function setCenterSize(s){ state.centerSize = s; saveLocal(); updateUI(); }
 function setPageGradient(){
   document.body.style.background = "radial-gradient(circle at 15% 15%,rgba(99,91,255,.24),transparent 30%),radial-gradient(circle at 85% 80%,rgba(14,165,233,.18),transparent 28%),linear-gradient(135deg,#e0e7ff,#f0fdfa)";
   toast("Đã đổi hình nền gradient");
@@ -817,6 +818,7 @@ function confetti(){
   setTimeout(() => c.innerHTML = "", 3300);
 }
 
+// CƠ CHẾ VẬT LÝ QUAY TỰ NHIÊN: NHẢ LÙI ĐẾN TỐI ĐA 5 Ô (20% TỈ LỆ)
 function spin(){
   if(state.spinning) return;
   const list = cloneEntries();
@@ -827,45 +829,71 @@ function spin(){
   state.spinning = true;
 
   const arc = (Math.PI * 2) / list.length;
-  const fullTurns = (state.slow ? 8 : 16) + Math.floor(Math.random() * 6);
-  const randomContinuousAngle = Math.random() * (Math.PI * 2);
+  
+  // 1. Quyết định nhả lùi đàn hồi (20% xác suất)
+  const isRollback = Math.random() < 0.20;
+  
+  // Phân chia bước lùi từ 1 đến 5 ô (n-1 đến n-5)
+  let rollbackSteps = 1;
+  const rRoll = Math.random();
+  if(rRoll < 0.35) rollbackSteps = 1;       // 35% -> lùi 1 ô (n-1)
+  else if(rRoll < 0.60) rollbackSteps = 2;  // 25% -> lùi 2 ô (n-2)
+  else if(rRoll < 0.80) rollbackSteps = 3;  // 20% -> lùi 3 ô (n-3)
+  else if(rRoll < 0.92) rollbackSteps = 4;  // 12% -> lùi 4 ô (n-4)
+  else rollbackSteps = 5;                   // 8%  -> lùi 5 ô (n-5)
 
-  const start = state.rotation;
-  const end = start + fullTurns * Math.PI * 2 + randomContinuousAngle;
+  // 2. Thiết lập chuyển động
+  const fullTurns = (state.slow ? 6 : 11) + Math.floor(Math.random() * 4);
   const dur = state.duration * 1000;
   const t0 = performance.now();
-  lastPegIndex = -1;
+  const start = state.rotation;
 
-  function ease(t){
-    return 1 - Math.pow(1 - t, 3.8);
-  }
+  // Điểm dừng tự do ngẫu nhiên trong ô (KHÔNG bị gò bó vào giữa)
+  const randomOrganicOffset = (0.12 + Math.random() * 0.76) * arc;
+  const randomTurnsAngle = Math.floor(Math.random() * list.length) * arc + randomOrganicOffset;
+
+  let apexAngle = start + fullTurns * Math.PI * 2 + randomTurnsAngle;
+  let rollbackAngle = rollbackSteps * arc + (Math.random() * 0.25 - 0.12) * arc;
+
+  lastPegIndex = Math.floor((start + Math.PI / 2) / arc);
+  const tApex = 0.80; // Thời điểm chạm đỉnh kháng lực trước khi nhả lùi (80% thời gian)
 
   function frame(now){
     const p = Math.min(1, (now - t0) / dur);
-    const e = ease(p);
-    state.rotation = start + (end - start) * e;
+
+    if(!isRollback){
+      const u = p;
+      const progress = 0.88 * (1 - Math.pow(1 - u, 4)) + 0.12 * (1 - Math.pow(1 - u, 2));
+      state.rotation = start + (apexAngle - start) * progress;
+    } else {
+      if(p <= tApex){
+        const u = p / tApex;
+        const progress = 0.88 * (1 - Math.pow(1 - u, 4)) + 0.12 * (1 - Math.pow(1 - u, 2));
+        state.rotation = start + (apexAngle - start) * progress;
+      } else {
+        const u = (p - tApex) / (1.0 - tApex);
+        const smoothBack = u * u * (3 - 2 * u); // Đường cong mượt mà không khựng đơ
+        state.rotation = apexAngle - rollbackAngle * smoothBack;
+      }
+    }
+
     drawWheel();
+    updatePointerColor();
 
     const currentPeg = Math.floor((state.rotation + Math.PI / 2) / arc);
     if(currentPeg !== lastPegIndex){
       playTickSound();
-      lastPegIndex = currentPeg;
 
       const pointer = $("wheelPointer");
       if(pointer){
-        pointer.style.transform = "translateY(-50%) rotate(-6deg)";
+        const isMovingBackward = currentPeg < lastPegIndex;
+        pointer.style.transform = isMovingBackward ? "translateY(-50%) rotate(6deg)" : "translateY(-50%) rotate(-6deg)";
         clearTimeout(pointer.twitchTimer);
         pointer.twitchTimer = setTimeout(() => {
           pointer.style.transform = "translateY(-50%) rotate(0deg)";
         }, 35);
       }
-
-      if(state.pointerColor){
-        const activeIdx = Math.floor(((Math.PI * 2) - ((state.rotation % (Math.PI * 2)) + Math.PI * 2) % (Math.PI * 2)) / arc) % list.length;
-        if(list[activeIdx] && pointer){
-          pointer.style.borderRightColor = list[activeIdx].color || state.colors[activeIdx % state.colors.length];
-        }
-      }
+      lastPegIndex = currentPeg;
     }
 
     if(p < 1) requestAnimationFrame(frame);
@@ -896,6 +924,7 @@ function finishSpin(){
   renderResults();
   playWinSound();
   confetti();
+  updatePointerColor();
 
   if(state.animateWinner){
     $("centerLabel").animate([
@@ -905,23 +934,43 @@ function finishSpin(){
     ], { duration: 650 });
   }
 
-  if(state.popup){
-    $("winnerName").textContent = w.name;
-    $("winnerMessage").textContent = w.message || state.message;
-    $("winnerOverlay").setAttribute("data-winner-id", String(w.id));
-    $("winnerOverlay").style.display = "flex";
+  // Tự động xóa tên ngay lập tức nếu tùy chọn này được bật
+  if(state.autoRemove){
+    const found = state.entries.find(e => e.id === w.id || e.name === w.name);
+    if(found){
+      found.enabled = false;
+      saveLocal();
+      updateUI();
+    }
   }
 
-  clearTimeout(autoRemoveTimer);
-  if(state.autoRemove){
-    autoRemoveTimer = setTimeout(() => {
-      removeCurrentWinner(true);
-    }, 5000);
-  }
+  // CHỜ 2 GIÂY MỚI HIỆN POPUP THÔNG BÁO
+  clearTimeout(popupShowTimer);
+  popupShowTimer = setTimeout(() => {
+    if(state.popup){
+      $("winnerName").textContent = w.name;
+      $("winnerMessage").textContent = w.message || state.message;
+      $("winnerOverlay").setAttribute("data-winner-id", String(w.id));
+      
+      // Nếu đã bật tự động xóa tên thì ẩn nút Loại bỏ
+      const removeBtn = $("removeWinnerBtn");
+      if(removeBtn){
+        removeBtn.style.display = state.autoRemove ? "none" : "inline-block";
+      }
+
+      $("winnerOverlay").style.display = "flex";
+
+      // Popup hiện tối đa 5 giây rồi tự đóng
+      clearTimeout(popupCloseTimer);
+      popupCloseTimer = setTimeout(() => {
+        closeWinnerPopup();
+      }, 5000);
+    }
+  }, 2000);
 }
 
 function removeCurrentWinner(silent = false){
-  clearTimeout(autoRemoveTimer);
+  clearTimeout(popupCloseTimer);
   
   const overlay = $("winnerOverlay");
   if(overlay) overlay.style.display = "none";
@@ -951,7 +1000,7 @@ function removeCurrentWinner(silent = false){
 }
 
 function closeWinnerPopup(){
-  clearTimeout(autoRemoveTimer);
+  clearTimeout(popupCloseTimer);
   const overlay = $("winnerOverlay");
   if(overlay) overlay.style.display = "none";
 }
@@ -985,9 +1034,7 @@ function exportResults(){
   toast("Đã xuất tệp: " + fileName);
 }
 
-// ========================================================
-// HỆ THỐNG CHIA SẺ TOÀN NĂNG (LƯU & ĐỒNG BỘ MỌI THIẾT BỊ)
-// ========================================================
+// HỆ THỐNG CHIA SẺ TOÀN NĂNG
 function encodeStateToUrl(obj) {
   const json = JSON.stringify(obj);
   return btoa(encodeURIComponent(json).replace(/%([0-9A-F]{2})/g, (match, p1) => {
@@ -1039,14 +1086,27 @@ function loadHash(){
   }
 }
 
-// Bắt sự kiện bàn phím và chuột
-$("wheel").addEventListener("click", spin);
-$("centerLabel").addEventListener("click", spin);
+// Bắt sự kiện quay (Nhấp chuột hoặc phím tắt Space / Enter)
+function triggerSpinAction(){
+  // Nếu popup đang mở, đóng popup và quay tiếp ngay
+  const overlay = $("winnerOverlay");
+  if(overlay && overlay.style.display === "flex"){
+    closeWinnerPopup();
+  }
+  if(popupShowTimer){
+    clearTimeout(popupShowTimer);
+    popupShowTimer = null;
+  }
+  spin();
+}
+
+$("wheel").addEventListener("click", triggerSpinAction);
+$("centerLabel").addEventListener("click", triggerSpinAction);
 
 document.addEventListener("keydown", e => {
   if((e.code === "Space" || e.code === "Enter") && !["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)){
     e.preventDefault();
-    spin();
+    triggerSpinAction();
   }
 });
 
